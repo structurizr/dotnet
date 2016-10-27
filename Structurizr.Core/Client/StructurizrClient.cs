@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Structurizr.Client
 {
@@ -35,91 +36,110 @@ namespace Structurizr.Client
             this.WorkspaceArchiveLocation = new DirectoryInfo(".");
         }
 
-        public Workspace GetWorkspace(long workspaceId)
-        {
-            using (WebClient webClient = new WebClient())
-            {
-                try
-                { 
-                    string httpMethod = "GET";
-                    string path = WorkspacePath + workspaceId;
+       public Workspace GetWorkspace(long workspaceId)
+       {
+          var getTask = GetWorkspaceAsync(workspaceId);
+          getTask.Wait();
+          return getTask.Result;
+       }
 
-                    AddHeaders(webClient, httpMethod, path, "", "");
+       public async Task<Workspace> GetWorkspaceAsync(long workspaceId)
+       {
+          using (WebClient webClient = new WebClient())
+          {
+             try
+             {
+                string httpMethod = "GET";
+                string path = WorkspacePath + workspaceId;
 
-                    string response = webClient.DownloadString(this.Url + path);
-                    ArchiveWorkspace(workspaceId, response);
+                AddHeaders(webClient, httpMethod, path, "", "");
 
-                    StringReader stringReader = new StringReader(response);
-                    if (EncryptionStrategy == null)
-                    {
-                        return new JsonReader().Read(stringReader);
-                    }
-                    else {
-                        EncryptedWorkspace encryptedWorkspace = new EncryptedJsonReader().Read(stringReader);
-                        encryptedWorkspace.EncryptionStrategy.Passphrase = this.EncryptionStrategy.Passphrase;
-                        return encryptedWorkspace.Workspace;
-                    }
-                }
-                catch (Exception e)
+                string response = await webClient.DownloadStringTaskAsync(this.Url + path);
+                ArchiveWorkspace(workspaceId, response);
+
+                StringReader stringReader = new StringReader(response);
+                if (EncryptionStrategy == null)
                 {
-                    throw new StructurizrClientException("There was an error getting the workspace: " + e.Message, e);
+                   return new JsonReader().Read(stringReader);
                 }
-            }
-        }
+                else {
+                   EncryptedWorkspace encryptedWorkspace = new EncryptedJsonReader().Read(stringReader);
+                   encryptedWorkspace.EncryptionStrategy.Passphrase = this.EncryptionStrategy.Passphrase;
+                   return encryptedWorkspace.Workspace;
+                }
+             }
+             catch (Exception e)
+             {
+                throw new StructurizrClientException("There was an error getting the workspace: " + e.Message, e);
+             }
+          }
+       }
 
-        public void PutWorkspace(long workspaceId, Workspace workspace)
-        {
-            workspace.Id = workspaceId;
+       public void PutWorkspace(long workspaceId, Workspace workspace)
+       {
+          var putTask = PutWorkspaceAsync(workspaceId, workspace);
+          putTask.Wait();
+       }
 
-            using (WebClient webClient = new WebClient())
-            {
-                try
+       public async Task PutWorkspaceAsync(long workspaceId, Workspace workspace)
+       {
+          workspace.Id = workspaceId;
+
+          using (WebClient webClient = new WebClient())
+          {
+             try
+             {
+                string httpMethod = "PUT";
+                string path = WorkspacePath + workspaceId;
+                string workspaceAsJson = "";
+
+                using (StringWriter stringWriter = new StringWriter())
                 {
-                    string httpMethod = "PUT";
-                    string path = WorkspacePath + workspaceId;
-                    string workspaceAsJson = "";
-
-                    using (StringWriter stringWriter = new StringWriter())
-                    {
-                        if (EncryptionStrategy == null)
-                        {
-                            JsonWriter jsonWriter = new JsonWriter(false);
-                            jsonWriter.Write(workspace, stringWriter);
-                        }
-                        else
-                        {
-                            EncryptedWorkspace encryptedWorkspace = new EncryptedWorkspace(workspace, EncryptionStrategy);
-                            EncryptedJsonWriter jsonWriter = new EncryptedJsonWriter(false);
-                            jsonWriter.Write(encryptedWorkspace, stringWriter);
-                        }
-                        stringWriter.Flush();
-                        workspaceAsJson = stringWriter.ToString();
-                        System.Console.WriteLine(workspaceAsJson);
-                    }
-
-                    AddHeaders(webClient, httpMethod, path, workspaceAsJson, "application/json; charset=UTF-8");
-
-                    string response = webClient.UploadString(this.Url + path, httpMethod, workspaceAsJson);
-                    System.Console.WriteLine(response);
+                   if (EncryptionStrategy == null)
+                   {
+                      JsonWriter jsonWriter = new JsonWriter(false);
+                      jsonWriter.Write(workspace, stringWriter);
+                   }
+                   else
+                   {
+                      EncryptedWorkspace encryptedWorkspace = new EncryptedWorkspace(workspace, EncryptionStrategy);
+                      EncryptedJsonWriter jsonWriter = new EncryptedJsonWriter(false);
+                      jsonWriter.Write(encryptedWorkspace, stringWriter);
+                   }
+                   await stringWriter.FlushAsync();
+                   workspaceAsJson = stringWriter.ToString();
+                   System.Console.WriteLine(workspaceAsJson);
                 }
-                catch (Exception e)
-                {
-                    throw new StructurizrClientException("There was an error putting the workspace: " + e.Message, e);
-                }
-            }
-        }
 
-        public void MergeWorkspace(long workspaceId, Workspace workspace)
-        {
-            Workspace currentWorkspace = GetWorkspace(workspaceId);
-            if (currentWorkspace != null)
-            {
-                workspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
-            }
-            PutWorkspace(workspaceId, workspace);
-        }
+                AddHeaders(webClient, httpMethod, path, workspaceAsJson, "application/json; charset=UTF-8");
 
-        private void AddHeaders(WebClient webClient, string httpMethod, string path, string content, string contentType)
+                string response = await webClient.UploadStringTaskAsync(this.Url + path, httpMethod, workspaceAsJson);
+                System.Console.WriteLine(response);
+             }
+             catch (Exception e)
+             {
+                throw new StructurizrClientException("There was an error putting the workspace: " + e.Message, e);
+             }
+          }
+       }
+
+       public void MergeWorkspace(long workspaceId, Workspace workspace)
+       {
+          var mergeTask = MergeWorkspaceAsync(workspaceId, workspace);
+          mergeTask.Wait();
+       }
+
+       public async Task MergeWorkspaceAsync(long workspaceId, Workspace workspace)
+       {
+          Workspace currentWorkspace = await GetWorkspaceAsync(workspaceId);
+          if (currentWorkspace != null)
+          {
+             workspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
+          }
+          await PutWorkspaceAsync(workspaceId, workspace);
+       }
+
+       private void AddHeaders(WebClient webClient, string httpMethod, string path, string content, string contentType)
         {
             webClient.Encoding = Encoding.UTF8;
             string contentMd5 = new Md5Digest().Generate(content);
