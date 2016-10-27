@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Structurizr.Client
 {
@@ -35,39 +36,46 @@ namespace Structurizr.Client
             this.WorkspaceArchiveLocation = new DirectoryInfo(".");
         }
 
-        public Workspace GetWorkspace(long workspaceId)
-        {
-            using (WebClient webClient = new WebClient())
-            {
-                try
-                { 
-                    string httpMethod = "GET";
-                    string path = WorkspacePath + workspaceId;
+       public Workspace GetWorkspace(long workspaceId)
+       {
+          var getTask = GetWorkspaceAsync(workspaceId);
+          getTask.Wait();
+          return getTask.Result;
+       }
 
-                    AddHeaders(webClient, httpMethod, path, "", "");
+       public async Task<Workspace> GetWorkspaceAsync(long workspaceId)
+       {
+          using (WebClient webClient = new WebClient())
+          {
+             try
+             {
+                string httpMethod = "GET";
+                string path = WorkspacePath + workspaceId;
 
-                    string response = webClient.DownloadString(this.Url + path);
-                    ArchiveWorkspace(workspaceId, response);
+                AddHeaders(webClient, httpMethod, path, "", "");
 
-                    StringReader stringReader = new StringReader(response);
-                    if (EncryptionStrategy == null)
-                    {
-                        return new JsonReader().Read(stringReader);
-                    }
-                    else {
-                        EncryptedWorkspace encryptedWorkspace = new EncryptedJsonReader().Read(stringReader);
-                        encryptedWorkspace.EncryptionStrategy.Passphrase = this.EncryptionStrategy.Passphrase;
-                        return encryptedWorkspace.Workspace;
-                    }
-                }
-                catch (Exception e)
+                string response = await webClient.DownloadStringTaskAsync(this.Url + path);
+                ArchiveWorkspace(workspaceId, response);
+
+                StringReader stringReader = new StringReader(response);
+                if (EncryptionStrategy == null)
                 {
-                    throw new StructurizrClientException("There was an error getting the workspace: " + e.Message, e);
+                   return new JsonReader().Read(stringReader);
                 }
-            }
-        }
+                else {
+                   EncryptedWorkspace encryptedWorkspace = new EncryptedJsonReader().Read(stringReader);
+                   encryptedWorkspace.EncryptionStrategy.Passphrase = this.EncryptionStrategy.Passphrase;
+                   return encryptedWorkspace.Workspace;
+                }
+             }
+             catch (Exception e)
+             {
+                throw new StructurizrClientException("There was an error getting the workspace: " + e.Message, e);
+             }
+          }
+       }
 
-        public void PutWorkspace(long workspaceId, Workspace workspace)
+       public void PutWorkspace(long workspaceId, Workspace workspace)
         {
             workspace.Id = workspaceId;
 
