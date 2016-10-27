@@ -124,16 +124,22 @@ namespace Structurizr.Client
        }
 
        public void MergeWorkspace(long workspaceId, Workspace workspace)
-        {
-            Workspace currentWorkspace = GetWorkspace(workspaceId);
-            if (currentWorkspace != null)
-            {
-                workspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
-            }
-            PutWorkspace(workspaceId, workspace);
-        }
+       {
+          var mergeTask = MergeWorkspaceAsync(workspaceId, workspace);
+          mergeTask.Wait();
+       }
 
-        private void AddHeaders(WebClient webClient, string httpMethod, string path, string content, string contentType)
+       public async Task MergeWorkspaceAsync(long workspaceId, Workspace workspace)
+       {
+          Workspace currentWorkspace = await GetWorkspaceAsync(workspaceId);
+          if (currentWorkspace != null)
+          {
+             workspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
+          }
+          await PutWorkspaceAsync(workspaceId, workspace);
+       }
+
+       private void AddHeaders(WebClient webClient, string httpMethod, string path, string content, string contentType)
         {
             webClient.Encoding = Encoding.UTF8;
             string contentMd5 = new Md5Digest().Generate(content);
