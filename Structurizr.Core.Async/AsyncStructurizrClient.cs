@@ -60,9 +60,13 @@ namespace Structurizr.Core.Async
             return Task.Run(() => _privateClient.PutWorkspace(workspaceId, workspace));
         }
 
-        public Task MergeWorkspaceAsync(long workspaceId, Workspace workspace)
+        public Workspace MergeWorkspaces(Workspace currentWorkspace, Workspace newWorkspace)
         {
-            return Task.Run(() => _privateClient.MergeWorkspace(workspaceId, workspace));
+            if (currentWorkspace != null)
+            {
+                newWorkspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
+            }
+            return newWorkspace;
         }
     }
 }
