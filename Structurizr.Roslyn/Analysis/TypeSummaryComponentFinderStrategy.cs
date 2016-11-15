@@ -43,7 +43,7 @@ namespace Structurizr.Analysis
                         {
                             if (location.IsInSource)
                             {
-                                codeElement.Source = location.SourceTree.FilePath;
+                                codeElement.Url = new Uri(location.SourceTree.FilePath).AbsoluteUri;
                                 codeElement.Size += location.SourceTree.GetText().Lines.Count;
                                 component.Size += codeElement.Size;
                             }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Structurizr
@@ -38,6 +39,11 @@ namespace Structurizr
         [DataMember(Name = "componentViews", EmitDefaultValue = false)]
         public List<ComponentView> ComponentViews { get; set; }
 
+        /// <summary>
+        /// The set of dynamic views.
+        /// </summary>
+        [DataMember(Name = "dynamicViews", EmitDefaultValue = false)]
+        public List<DynamicView> DynamicViews { get; set; }
 
         /// <summary>
         /// The configuration object associated with this set of views.
@@ -51,6 +57,7 @@ namespace Structurizr
             this.SystemContextViews = new List<SystemContextView>();
             this.ContainerViews = new List<ContainerView>();
             this.ComponentViews = new List<ComponentView>();
+            this.DynamicViews = new List<DynamicView>();
 
             this.Configuration = new Configuration();
         }
@@ -62,83 +69,150 @@ namespace Structurizr
 
         public EnterpriseContextView CreateEnterpriseContextView(string key, string description)
         {
-            EnterpriseContextView view = new EnterpriseContextView(Model, key, description);
-
-            //            if (GetViewWithKey(key) != null)
-            //            {
-            //                throw new ArgumentException("A view with the key " + key + " already exists.");
-            //            }
-            //            else
-            // {
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                EnterpriseContextView view = new EnterpriseContextView(Model, key, description);
                 EnterpriseContextViews.Add(view);
                 return view;
-//            }
+            }
         }
 
         public SystemContextView CreateSystemContextView(SoftwareSystem softwareSystem, string key, string description)
         {
-            SystemContextView view = new SystemContextView(softwareSystem, key, description);
-            this.SystemContextViews.Add(view);
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                SystemContextView view = new SystemContextView(softwareSystem, key, description);
+                this.SystemContextViews.Add(view);
 
-            return view;
+                return view;
+            }
         }
 
         public ContainerView CreateContainerView(SoftwareSystem softwareSystem, string key, string description)
         {
-            ContainerView view = new ContainerView(softwareSystem, key, description);
-            ContainerViews.Add(view);
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                ContainerView view = new ContainerView(softwareSystem, key, description);
+                ContainerViews.Add(view);
 
-            return view;
+                return view;
+            }
         }
 
         public ComponentView CreateComponentView(Container container, string key, string description)
         {
-            ComponentView view = new ComponentView(container, key, description);
-            ComponentViews.Add(view);
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                ComponentView view = new ComponentView(container, key, description);
+                ComponentViews.Add(view);
 
-            return view;
+                return view;
+            }
+        }
+
+        public DynamicView CreateDynamicView(string key, string description)
+        {
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                DynamicView view = new DynamicView(Model, key, description);
+                DynamicViews.Add(view);
+                return view;
+            }
+        }
+
+        public DynamicView CreateDynamicView(SoftwareSystem softwareSystem, string key, string description)
+        {
+            if (softwareSystem == null)
+            {
+                throw new ArgumentException("Software system must not be null.");
+            }
+
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                DynamicView view = new DynamicView(softwareSystem, key, description);
+                DynamicViews.Add(view);
+                return view;
+            }
+        }
+
+        public DynamicView CreateDynamicView(Container container, string key, string description)
+        {
+            if (container == null)
+            {
+                throw new ArgumentException("Container must not be null.");
+            }
+
+            if (GetViewWithKey(key) != null)
+            {
+                throw new ArgumentException("A view with the key " + key + " already exists.");
+            }
+            else
+            {
+                DynamicView view = new DynamicView(container, key, description);
+                DynamicViews.Add(view);
+                return view;
+            }
         }
 
         public void Hydrate()
         {
-            foreach (EnterpriseContextView enterpriseContextView in EnterpriseContextViews)
+            foreach (EnterpriseContextView view in EnterpriseContextViews)
             {
-                HydrateView(enterpriseContextView);
+                view.Model = Model;
+                HydrateView(view);
             }
 
-            foreach (SystemContextView systemContextView in SystemContextViews)
+            foreach (SystemContextView view in SystemContextViews)
             {
-                HydrateView(systemContextView);
+                view.SoftwareSystem = Model.GetSoftwareSystemWithId(view.SoftwareSystemId);
+                HydrateView(view);
             }
 
-            foreach (ContainerView containerView in ContainerViews)
+            foreach (ContainerView view in ContainerViews)
             {
-                HydrateView(containerView);
+                HydrateView(view);
             }
 
-            foreach (ComponentView componentView in ComponentViews)
+            foreach (ComponentView view in ComponentViews)
             {
-                HydrateView(componentView);
-                componentView.Container = componentView.SoftwareSystem.GetContainerWithId(componentView.ContainerId);
+                view.SoftwareSystem = Model.GetSoftwareSystemWithId(view.SoftwareSystemId);
+                view.Container = view.SoftwareSystem.GetContainerWithId(view.ContainerId);
+                HydrateView(view);
             }
 
-            /*
-            dynamicViews.forEach(this::hydrateView);
-            */
+            foreach (DynamicView view in DynamicViews)
+            {
+                view.Model = Model;
+                HydrateView(view);
+            }
         }
 
         private void HydrateView(View view)
         {
-            if (view is EnterpriseContextView)
-            {
-                EnterpriseContextView enterpriseContextView = view as EnterpriseContextView;
-                enterpriseContextView.Model = Model;
-            }
-            else
-            {
-                view.SoftwareSystem = Model.GetSoftwareSystemWithId(view.SoftwareSystemId);
-            }
-
             foreach (ElementView elementView in view.Elements)
             {
                 elementView.Element = Model.GetElement(elementView.Id);
@@ -187,86 +261,65 @@ namespace Structurizr
                 }
             }
 
-            /*
-            for (DynamicView sourceView : source.getDynamicViews())
+            foreach (DynamicView sourceView in source.DynamicViews)
             {
-                DynamicView destinationView = findDynamicView(sourceView);
+                DynamicView destinationView = FindDynamicView(sourceView);
                 if (destinationView != null)
                 {
-                    destinationView.copyLayoutInformationFrom(sourceView);
+                    destinationView.CopyLayoutInformationFrom(sourceView);
                 }
             }
-            */
         }
 
         private EnterpriseContextView FindEnterpriseContextView(EnterpriseContextView enterpriseContextView)
         {
-            foreach (EnterpriseContextView view in EnterpriseContextViews)
-            {
-                if (view.Key == enterpriseContextView.Key)
-                {
-                    return view;
-                }
-            }
-
-            foreach (EnterpriseContextView view in EnterpriseContextViews)
-            {
-                if (view.Title == enterpriseContextView.Title)
-                {
-                    return view;
-                }
-            }
-
-            return null;
+            return EnterpriseContextViews.FirstOrDefault(view => view.Key == enterpriseContextView.Key);
         }
 
         private SystemContextView FindSystemContextView(SystemContextView systemContextView)
         {
-            foreach (SystemContextView view in SystemContextViews)
-            {
-                if (view.Key == systemContextView.Key)
-                {
-                    return view;
-                }
-            }
-
-            foreach (SystemContextView view in SystemContextViews)
-            {
-                if (view.Title == systemContextView.Title)
-                {
-                    return view;
-                }
-            }
-
-            return null;
+            return SystemContextViews.FirstOrDefault(view => view.Key == systemContextView.Key);
         }
 
         private ContainerView FindContainerView(ContainerView containerView)
         {
-            foreach (ContainerView view in ContainerViews)
-            {
-                if (view.Key == containerView.Key)
-                {
-                    return view;
-                }
-            }
-
-            foreach (ContainerView view in ContainerViews)
-            {
-                if (view.Title == containerView.Title)
-                {
-                    return view;
-                }
-            }
-
-            return null;
+            return ContainerViews.FirstOrDefault(view => view.Key == containerView.Key);
         }
 
         private ComponentView FindComponentView(ComponentView componentView)
         {
-            foreach (ComponentView view in ComponentViews)
+            return ComponentViews.FirstOrDefault(view => view.Key == componentView.Key);
+        }
+
+        private DynamicView FindDynamicView(DynamicView dynamicView)
+        {
+            return DynamicViews.FirstOrDefault(view => view.Key == dynamicView.Key);
+        }
+
+        /// <summary>
+        /// Finds the view with the specified key, or null if the view does not exist.
+        /// </summary>
+        public View GetViewWithKey(string key)
+        {
+            foreach (EnterpriseContextView view in EnterpriseContextViews)
             {
-                if (view.Key == componentView.Key)
+                if (view.Key.Equals(key))
+                {
+                    return view;
+                }
+            }
+
+            foreach (SystemContextView view in SystemContextViews)
+            {
+                if (view.Key.Equals(key))
+                {
+                    return view;
+                }
+            }
+
+            foreach (ContainerView view in ContainerViews)
+            {
+                if (view.Key.Equals(key))
                 {
                     return view;
                 }
@@ -274,7 +327,15 @@ namespace Structurizr
 
             foreach (ComponentView view in ComponentViews)
             {
-                if (view.Title == componentView.Title)
+                if (view.Key.Equals(key))
+                {
+                    return view;
+                }
+            }
+
+            foreach (DynamicView view in DynamicViews)
+            {
+                if (view.Key.Equals(key))
                 {
                     return view;
                 }

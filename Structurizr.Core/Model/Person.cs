@@ -52,17 +52,17 @@ namespace Structurizr
             return tags.ToList();
         }
 
-        public Relationship Delivers(Person destination, string description)
+        public new Relationship Delivers(Person destination, string description)
         {
             throw new InvalidOperationException();
         }
 
-        public Relationship Delivers(Person destination, string description, string technology)
+        public new Relationship Delivers(Person destination, string description, string technology)
         {
             throw new InvalidOperationException();
         }
 
-        public Relationship Delivers(Person destination, string description, string technology, InteractionStyle interactionStyle)
+        public new Relationship Delivers(Person destination, string description, string technology, InteractionStyle interactionStyle)
         {
             throw new InvalidOperationException();
         }

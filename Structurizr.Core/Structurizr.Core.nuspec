@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/structurizr/dotnet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial version.</releaseNotes>
+    <releaseNotes>Lots of changes to bring the .NET version closer to the Java version.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags></tags>
   </metadata>

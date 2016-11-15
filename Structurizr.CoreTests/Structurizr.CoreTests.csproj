@@ -68,11 +68,16 @@
     <Compile Include="Model\PersonTests.cs" />
     <Compile Include="Model\ComponentTests.cs" />
     <Compile Include="Model\ContainerTests.cs" />
+    <Compile Include="Model\RelationshipTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\ComponentViewTests.cs" />
     <Compile Include="View\ContainerViewTests.cs" />
     <Compile Include="View\EnterpriseContextViewTests.cs" />
     <Compile Include="View\SystemContextViewTests.cs" />
+    <Compile Include="View\ConfigurationTests.cs" />
+    <Compile Include="View\SequenceCounterTests.cs" />
+    <Compile Include="View\SequenceNumberTests.cs" />
+    <Compile Include="View\DynamicViewTests.cs" />
     <Compile Include="WorkspaceTests.cs" />
   </ItemGroup>
   <ItemGroup>

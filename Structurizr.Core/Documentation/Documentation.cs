@@ -87,22 +87,32 @@ namespace Structurizr
             }
             else if (Directory.Exists(directory.FullName))
             {
-                foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.png", SearchOption.TopDirectoryOnly))
-                {
-                    AddImage(new FileInfo(fileName));
-                }
-                foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.jpg", SearchOption.TopDirectoryOnly))
-                {
-                    AddImage(new FileInfo(fileName));
-                }
-                foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.jpeg", SearchOption.TopDirectoryOnly))
-                {
-                    AddImage(new FileInfo(fileName));
-                }
-                foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.gif", SearchOption.TopDirectoryOnly))
-                {
-                    AddImage(new FileInfo(fileName));
-                }
+                AddImagesFromPath("", directory);
+            }
+        }
+
+        private void AddImagesFromPath(string root, FileInfo directory)
+        {
+            foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.png", SearchOption.TopDirectoryOnly))
+            {
+                AddImage(new FileInfo(fileName));
+            }
+            foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.jpg", SearchOption.TopDirectoryOnly))
+            {
+                AddImage(new FileInfo(fileName));
+            }
+            foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.jpeg", SearchOption.TopDirectoryOnly))
+            {
+                AddImage(new FileInfo(fileName));
+            }
+            foreach (string fileName in Directory.EnumerateFiles(directory.FullName, "*.gif", SearchOption.TopDirectoryOnly))
+            {
+                AddImage(new FileInfo(fileName));
+            }
+
+            foreach (string directoryName in Directory.EnumerateDirectories(directory.FullName))
+            {
+                AddImagesFromPath(new FileInfo(directoryName).Name + "/", new FileInfo(directoryName));
             }
         }
 
@@ -153,3 +163,4 @@ namespace Structurizr
 
 
 }
+

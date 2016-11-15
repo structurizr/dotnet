@@ -12,8 +12,6 @@ namespace Structurizr
     public class EnterpriseContextView : StaticView
     {
 
-        private Model model;
-
         public override string Name
         {
             get
@@ -23,18 +21,7 @@ namespace Structurizr
             }
         }
 
-        public override Model Model
-        {
-            get
-            {
-                return model;
-            }
-
-            set
-            {
-                this.model = value;
-            }
-        }
+        public sealed override Model Model { get; set; }
 
         internal EnterpriseContextView() : base()
         {
@@ -42,7 +29,7 @@ namespace Structurizr
 
         internal EnterpriseContextView(Model model, string key, string description) : base(null, key, description)
         {
-            this.model = model;
+            Model = model;
         }
 
         /// <summary>

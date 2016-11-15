@@ -67,11 +67,15 @@
     <Compile Include="Model\SequentialIntegerIdGeneratorStrategy.cs" />
     <Compile Include="Model\Taggable.cs" />
     <Compile Include="Model\Tags.cs" />
+    <Compile Include="View\DynamicView.cs" />
     <Compile Include="View\ComponentView.cs" />
     <Compile Include="View\Configuration.cs" />
     <Compile Include="View\Metadata.cs" />
     <Compile Include="View\PaperSize.cs" />
+    <Compile Include="View\ParallelSequenceCounter.cs" />
     <Compile Include="View\Routing.cs" />
+    <Compile Include="View\SequenceCounter.cs" />
+    <Compile Include="View\SequenceNumber.cs" />
     <Compile Include="View\Shape.cs" />
     <Compile Include="View\Styles.cs" />
     <Compile Include="Model\Container.cs" />

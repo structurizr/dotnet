@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Structurizr
@@ -142,6 +143,39 @@ namespace Structurizr
             }
         }
 
+        public virtual RelationshipView Add(Relationship relationship)
+        {
+            if (relationship != null)
+            {
+                if (IsElementInView(relationship.Source) && IsElementInView(relationship.Destination))
+                {
+                    RelationshipView relationshipView = new RelationshipView(relationship);
+                    Relationships.Add(relationshipView);
+
+                    return relationshipView;
+                }
+            }
+
+            return null;
+        }
+
+        internal RelationshipView AddRelationship(Relationship relationship, string description, string order)
+        {
+            RelationshipView relationshipView = Add(relationship);
+            if (relationshipView != null)
+            {
+                relationshipView.Description = description;
+                relationshipView.Order = order;
+            }
+
+            return relationshipView;
+        }
+
+        private bool IsElementInView(Element element)
+        {
+            return Elements.Count(ev => ev.Element.Equals(element)) > 0;
+        }
+
         private void AddRelationships(Element element)
         {
             List<Element> elements = new List<Element>();
@@ -217,7 +251,7 @@ namespace Structurizr
             return null;
         }
 
-        private RelationshipView FindRelationshipView(RelationshipView sourceRelationshipView)
+        internal virtual RelationshipView FindRelationshipView(RelationshipView sourceRelationshipView)
         {
             foreach (RelationshipView relationshipView in Relationships)
             {

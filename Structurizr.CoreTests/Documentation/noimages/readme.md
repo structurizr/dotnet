@@ -1,0 +1,1 @@
+There are no images in this directory.

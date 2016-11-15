@@ -111,10 +111,11 @@ namespace Structurizr.Client
 
         public void MergeWorkspace(long workspaceId, Workspace workspace)
         {
-            Workspace currentWorkspace = GetWorkspace(workspaceId);
-            if (currentWorkspace != null)
+            Workspace remoteWorkspace = GetWorkspace(workspaceId);
+            if (remoteWorkspace != null)
             {
-                workspace.Views.CopyLayoutInformationFrom(currentWorkspace.Views);
+                workspace.Views.CopyLayoutInformationFrom(remoteWorkspace.Views);
+                workspace.Views.Configuration.CopyConfigurationFrom(remoteWorkspace.Views.Configuration);
             }
             PutWorkspace(workspaceId, workspace);
         }

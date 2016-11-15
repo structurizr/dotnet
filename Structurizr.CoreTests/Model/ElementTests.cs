@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Structurizr.CoreTests
 {
@@ -95,6 +96,43 @@ namespace Structurizr.CoreTests
             softwareSystem1.Uses(softwareSystem2, "Uses");
 
             Assert.IsTrue(softwareSystem2.HasAfferentRelationships());
+        }
+
+        [TestMethod]
+        public void Test_SetUrl_DoesNotThrowAnException_WhenANullUrlIsSpecified()
+        {
+            SoftwareSystem element = model.AddSoftwareSystem("Name", "Description");
+            element.Url = null;
+        }
+
+        [TestMethod]
+        public void Test_SetUrl_DoesNotThrowAnException_WhenAnEmptyUrlIsSpecified()
+        {
+            SoftwareSystem element = model.AddSoftwareSystem("Name", "Description");
+            element.Url = "";
+        }
+
+        [TestMethod]
+        public void Test_SetUrl_ThrowsAnException_WhenAnInvalidUrlIsSpecified()
+        {
+            try
+            {
+                SoftwareSystem element = model.AddSoftwareSystem("Name", "Description");
+                element.Url = "www.somedomain.com";
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("www.somedomain.com is not a valid URL.", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Test_SetUrl_DoesNotThrowAnException_WhenAValidUrlIsSpecified()
+        {
+            SoftwareSystem element = model.AddSoftwareSystem("Name", "Description");
+            element.Url = "http://www.somedomain.com";
+            Assert.AreEqual("http://www.somedomain.com", element.Url);
         }
 
     }

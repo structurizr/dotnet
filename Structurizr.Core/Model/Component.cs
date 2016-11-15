@@ -76,9 +76,12 @@ namespace Structurizr
 
             set
             {
-                CodeElement codeElement = new CodeElement(value);
-                codeElement.Role = CodeElementRole.Primary;
-                AddSupportingType(codeElement);
+                if (value != null && value.Trim().Length > 0)
+                {
+                    CodeElement codeElement = new CodeElement(value);
+                    codeElement.Role = CodeElementRole.Primary;
+                    AddSupportingType(codeElement);
+                }
             }
         }
 

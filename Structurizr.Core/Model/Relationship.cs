@@ -20,11 +20,21 @@ namespace Structurizr
         [DataMember(Name = "id", EmitDefaultValue = false)]
         public string Id { get; set; }
 
+        private string _description;
+
         /// <summary>
         /// A short description of this relationship.
         /// </summary>
         [DataMember(Name = "description", EmitDefaultValue = false)]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return _description ?? "";
+            }
+
+            set { _description = value; }
+        }
 
         private string sourceId;
 
@@ -181,7 +191,7 @@ namespace Structurizr
         {
             int result = SourceId.GetHashCode();
             result = 31 * result + DestinationId.GetHashCode();
-            result = 31 * result + Description.GetHashCode();
+            result = 31*result + Description.GetHashCode();
             return result;
         }
 

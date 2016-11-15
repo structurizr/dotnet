@@ -22,8 +22,36 @@ namespace Structurizr
         [DataMember(Name = "type", EmitDefaultValue = false)]
         public readonly string Type;
 
-        [DataMember(Name = "source", EmitDefaultValue = false)]
-        public string Source { get; set; }
+        [DataMember(Name = "description", EmitDefaultValue = false)]
+        public string Description { get; set; }
+
+        private string _url;
+
+        [DataMember(Name = "url", EmitDefaultValue = false)]
+        public string Url
+        {
+            get
+            {
+                return _url;
+            }
+
+            set
+            {
+                if (value != null && value.Trim().Length > 0)
+                {
+                    Uri uri;
+                    bool result = Uri.TryCreate(value, UriKind.Absolute, out uri);
+                    if (result)
+                    {
+                        this._url = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException(value + " is not a valid URL.");
+                    }
+                }
+            }
+        }
 
         [DataMember(Name = "language", EmitDefaultValue = false)]
         public string Language { get; set; }
