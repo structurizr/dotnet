@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizr.Core", "Structurizr.Core\Structurizr.Core.csproj", "{F9C9B68E-8CC9-4404-94FD-1FF6A87AC3AA}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizr.CoreTests", "Structurizr.CoreTests\Structurizr.CoreTests.csproj", "{FBCEBB50-2535-4568-92B0-C9ADFD97D448}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizr.Roslyn", "Structurizr.Roslyn\Structurizr.Roslyn.csproj", "{B8276441-7DC2-4229-AEAF-CB6598D7DC73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizr.Core.Async", "Structurizr.Core.Async\Structurizr.Core.Async.csproj", "{98748011-7C8C-46F5-8A21-4E5639AE8C43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{B8276441-7DC2-4229-AEAF-CB6598D7DC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8276441-7DC2-4229-AEAF-CB6598D7DC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8276441-7DC2-4229-AEAF-CB6598D7DC73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98748011-7C8C-46F5-8A21-4E5639AE8C43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98748011-7C8C-46F5-8A21-4E5639AE8C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98748011-7C8C-46F5-8A21-4E5639AE8C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98748011-7C8C-46F5-8A21-4E5639AE8C43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
