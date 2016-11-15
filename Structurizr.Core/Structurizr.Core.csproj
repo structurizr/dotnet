@@ -37,6 +37,7 @@
     <Compile Include="Client\HmacAuthorizationHeader.cs" />
     <Compile Include="Client\HmacContent.cs" />
     <Compile Include="Client\HttpHeaders.cs" />
+    <Compile Include="Client\HttpHeadersHelper.cs" />
     <Compile Include="Client\Md5Digest.cs" />
     <Compile Include="Client\StructurizrClient.cs" />
     <Compile Include="Client\StructurizrClientException.cs" />
