@@ -51,6 +51,10 @@
     <None Include="FinancialRiskSystem\quality-attributes.md" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Structurizr.Core.Async\Structurizr.Core.Async.csproj">
+      <Project>{98748011-7C8C-46F5-8A21-4E5639AE8C43}</Project>
+      <Name>Structurizr.Core.Async</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj">
       <Project>{f9c9b68e-8cc9-4404-94fd-1ff6a87ac3aa}</Project>
       <Name>Structurizr.Core</Name>
