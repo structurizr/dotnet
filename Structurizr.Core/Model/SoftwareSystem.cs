@@ -46,7 +46,7 @@ namespace Structurizr
             }
         }
 
-        internal SoftwareSystem()
+        public SoftwareSystem()
         {
             this.Containers = new HashSet<Container>();
         }
@@ -103,6 +103,16 @@ namespace Structurizr
         public Container AddContainer(String name, String description, String technology)
         {
             return Model.AddContainer(this, name, description, technology);
+        }
+
+        /// <summary>
+        /// Adds a container
+        /// (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="container">the container to be added</param>
+        public Container AddContainer(Container container)
+        {
+            return Model.AddContainer(this, container);
         }
 
         internal void Add(Container container)
