@@ -39,7 +39,7 @@ namespace Structurizr
             }
         }
 
-        internal Person()
+        public Person()
         {
         }
 

@@ -70,16 +70,28 @@ namespace Structurizr
                 softwareSystem.Name = name;
                 softwareSystem.Description = description;
 
-                SoftwareSystems.Add(softwareSystem);
-
-                softwareSystem.Id = idGenerator.GenerateId(softwareSystem);
-                AddElementToInternalStructures(softwareSystem);
+                Add(softwareSystem);
 
                 return softwareSystem;
             }
             else
             {
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Adds a software system to the model
+        /// (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="softwareSystem">The SoftwareSystem instance to be added to the model</param>
+        public void Add(SoftwareSystem softwareSystem)
+        {
+            if (GetSoftwareSystemWithName(softwareSystem.Name) == null)
+            {
+                SoftwareSystems.Add(softwareSystem);
+                softwareSystem.Id = idGenerator.GenerateId(softwareSystem);
+                AddElementToInternalStructures(softwareSystem);
             }
         }
 
@@ -133,6 +145,17 @@ namespace Structurizr
                 container.Description = description;
                 container.Technology = technology;
 
+                return this.AddContainer(parent, container);
+            }
+            else {
+                return null;
+            }
+        }
+
+        internal Container AddContainer(SoftwareSystem parent, Container container)
+        {
+            if (parent.GetContainerWithName(container.Name) == null)
+            {
                 container.Parent = parent;
                 parent.Add(container);
 
@@ -141,7 +164,8 @@ namespace Structurizr
 
                 return container;
             }
-            else {
+            else
+            {
                 return null;
             }
         }

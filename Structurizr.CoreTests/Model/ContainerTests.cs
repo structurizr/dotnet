@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Structurizr.CoreTests.MyApp;
 
 namespace Structurizr.CoreTests
 {
@@ -55,6 +56,27 @@ namespace Structurizr.CoreTests
 
             Assert.IsTrue(container.Tags.Contains(Tags.Element));
             Assert.IsTrue(container.Tags.Contains(Tags.Container));
+        }
+
+        [TestMethod]
+        public void Test_Adding_A_Component_Adds_It_To_The_List_Of_Components()
+        {
+            MyComponent myComponent = new MyComponent();
+            container.Add(myComponent);
+
+            Assert.IsTrue(container.Components.Contains(myComponent));
+        }
+
+        [TestMethod]
+        public void Test_Adding_A_Component__Does_Not_Add_It_To_The_List_Of_Components_If_A_Component_With_The_Same_Name_Exists()
+        {
+            MyComponent myComponent = new MyComponent();
+            MyComponent myComponent2 = new MyComponent();
+
+            container.Add(myComponent);
+            container.Add(myComponent2);
+
+            Assert.IsFalse(container.Components.Contains(myComponent2));
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Structurizr.CoreTests.MyApp;
 
 namespace Structurizr.CoreTests
 {
@@ -69,5 +70,14 @@ namespace Structurizr.CoreTests
             Assert.IsTrue(component.Tags.Contains(Tags.Component));
         }
 
+        [TestMethod]
+        public void Test_Adding_A_CodeElement_Adds_It_To_The_List_Of_Elements()
+        {
+            Component component = new Component();
+            MyClass myClass = new MyClass();
+            component.AddSupportingType(myClass);
+
+            Assert.IsTrue(component.Code.Contains(myClass));
+        }
     }
 }

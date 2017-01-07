@@ -43,7 +43,7 @@ namespace Structurizr
             }
         }
 
-        internal Container()
+        public Container()
         {
             this.Components = new HashSet<Component>();
         }
@@ -70,7 +70,7 @@ namespace Structurizr
             return component;
         }
 
-        internal void Add(Component component)
+        public void Add(Component component)
         {
             if (GetComponentWithName(component.Name) == null)
             {

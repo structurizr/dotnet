@@ -64,7 +64,12 @@
     <Compile Include="Documentation\DocumentationTests.cs" />
     <Compile Include="Encryption\AesEncryptionStrategyTests.cs" />
     <Compile Include="Model\CodeElementTests.cs" />
+    <Compile Include="Model\SoftwareSystemTests.cs" />
     <Compile Include="Model\ElementTests.cs" />
+    <Compile Include="Model\MyApp\MyClass.cs" />
+    <Compile Include="Model\MyApp\MyComponent.cs" />
+    <Compile Include="Model\MyApp\MyContainer.cs" />
+    <Compile Include="Model\MyApp\MySoftwareSystem.cs" />
     <Compile Include="Model\PersonTests.cs" />
     <Compile Include="Model\ComponentTests.cs" />
     <Compile Include="Model\ContainerTests.cs" />
