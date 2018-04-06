@@ -271,6 +271,8 @@ namespace Structurizr
 
         private void HydrateView(View view)
         {
+            view.SoftwareSystem = Model.GetElement(view.SoftwareSystemId) as SoftwareSystem;
+
             foreach (ElementView elementView in view.Elements)
             {
                 elementView.Element = Model.GetElement(elementView.Id);
