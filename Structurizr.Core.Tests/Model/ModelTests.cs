@@ -133,15 +133,19 @@ namespace Structurizr.Core.Tests
         }
 
         [Fact]
-        public void Test_AddRelationship_DisallowsTheSameRelationshipToBeAddedWithDifferentDescriptions()
+        public void Test_AddRelationship_DisallowsMultipleRelationshipsBetweenComponents()
         {
-            SoftwareSystem element1 = Model.AddSoftwareSystem("Element 1", "Description");
-            SoftwareSystem element2 = Model.AddSoftwareSystem("Element 2", "Description");
-            Relationship relationship1 = element1.Uses(element2, "Does something", "");
-            Relationship relationship2 = element1.Uses(element2, "Does something else", "");
-            Assert.True(element1.Has(relationship1));
+            SoftwareSystem system1 = Model.AddSoftwareSystem("System 1", "Description");
+            Container container1 = system1.AddContainer("Container 1", "Description", "");
+
+            Component component1 = container1.AddComponent("Component 1", "Description");
+            Component component2 = container1.AddComponent("Component 2", "Description");
+
+            Relationship relationship1 = component1.Uses(component2, "Does something", "");
+            Relationship relationship2 = component1.Uses(component2, "Does something else", "");
+            Assert.True(component1.Has(relationship1));
             Assert.Null(relationship2);
-            Assert.Equal(1, element1.Relationships.Count);
+            Assert.Equal(1, component1.Relationships.Count);
             Assert.Equal("Does something", relationship1.Description);
         }
 

@@ -98,7 +98,12 @@ namespace Structurizr
 
         public bool Has(Relationship relationship)
         {
-            return Relationships.Any(r => r.SourceId == relationship.SourceId && r.DestinationId == relationship.DestinationId);
+            if (relationship.Source is Component && relationship.Destination is Component)
+            {
+                return Relationships.Any(r => r.SourceId == relationship.SourceId && r.DestinationId == relationship.DestinationId);
+            }
+
+            return Relationships.Contains(relationship);
         }
 
         /// <summary>
