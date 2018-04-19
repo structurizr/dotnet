@@ -98,6 +98,11 @@ namespace Structurizr
 
         public bool Has(Relationship relationship)
         {
+            if (relationship.Source is Component && relationship.Destination is Component)
+            {
+                return Relationships.Any(r => r.SourceId == relationship.SourceId && r.DestinationId == relationship.DestinationId);
+            }
+
             return Relationships.Contains(relationship);
         }
 
@@ -192,5 +197,9 @@ namespace Structurizr
             return CanonicalName.Equals(element.CanonicalName);
         }
 
+        public override int GetHashCode()
+        {
+            return CanonicalName.GetHashCode() ^ typeof(Element).GetHashCode();
+        }
     }
 }
