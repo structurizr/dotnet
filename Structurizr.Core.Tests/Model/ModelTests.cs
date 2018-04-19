@@ -132,7 +132,18 @@ namespace Structurizr.Core.Tests
             Assert.Equal(1, element1.Relationships.Count);
         }
 
-
+        [Fact]
+        public void Test_AddRelationship_DisallowsTheSameRelationshipToBeAddedWithDifferentDescriptions()
+        {
+            SoftwareSystem element1 = Model.AddSoftwareSystem("Element 1", "Description");
+            SoftwareSystem element2 = Model.AddSoftwareSystem("Element 2", "Description");
+            Relationship relationship1 = element1.Uses(element2, "Does something", "");
+            Relationship relationship2 = element1.Uses(element2, "Does something else", "");
+            Assert.True(element1.Has(relationship1));
+            Assert.Null(relationship2);
+            Assert.Equal(1, element1.Relationships.Count);
+            Assert.Equal("Does something", relationship1.Description);
+        }
 
     }
 }

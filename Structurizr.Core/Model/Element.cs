@@ -98,7 +98,7 @@ namespace Structurizr
 
         public bool Has(Relationship relationship)
         {
-            return Relationships.Contains(relationship);
+            return Relationships.Any(r => r.SourceId == relationship.SourceId && r.DestinationId == relationship.DestinationId);
         }
 
         /// <summary>
@@ -192,5 +192,9 @@ namespace Structurizr
             return CanonicalName.Equals(element.CanonicalName);
         }
 
+        public override int GetHashCode()
+        {
+            return CanonicalName.GetHashCode() ^ typeof(Element).GetHashCode();
+        }
     }
 }
