@@ -18,10 +18,11 @@ namespace Structurizr.Api
     {
         private const string WorkspacePath = "/workspace/";
 
-        private readonly Lazy<HttpClient> _httpClient = new Lazy<HttpClient>(() => new HttpClient(), true);
+        private readonly object _lock = new object();
 
         private string _version;
         private string _url;
+        private HttpClient _httpClient;
 
         public string Url
         {
@@ -100,10 +101,22 @@ namespace Structurizr.Api
         /// <param name="apiKey">The API key of your workspace.</param>
         /// <param name="apiSecret">The API secret of your workspace.</param>
         public StructurizrClient(string apiUrl, string apiKey, string apiSecret)
+            : this(apiUrl, apiKey, apiSecret, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new Structurizr client with the specified API URL, key and secret.
+        /// </summary>
+        /// <param name="apiUrl">The URL of your Structurizr instance.</param>
+        /// <param name="apiKey">The API key of your workspace.</param>
+        /// <param name="apiSecret">The API secret of your workspace.</param>
+        public StructurizrClient(string apiUrl, string apiKey, string apiSecret, HttpClient httpClient)
         {
             Url = apiUrl;
             ApiKey = apiKey;
             ApiSecret = apiSecret;
+            _httpClient = httpClient;
 
             WorkspaceArchiveLocation = new DirectoryInfo(".");
             MergeFromRemote = true;
@@ -307,7 +320,13 @@ namespace Structurizr.Api
 
         protected virtual HttpClient createHttpClient()
         {
-            return _httpClient.Value;
+            lock(_lock)
+            {
+                if (_httpClient == null)
+                    _httpClient = new HttpClient();
+
+                return _httpClient;
+            }
         }
 
         private void AddHeaders(HttpClient httpClient, string httpMethod, string path, string content, string contentType)
@@ -354,6 +373,5 @@ namespace Structurizr.Api
                 WorkspaceArchiveLocation.FullName,
                 "structurizr-" + workspaceId + "-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + ".json");
         }
-
     }
 }

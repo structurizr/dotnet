@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Structurizr.Client.Tests.Api;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Structurizr.Api.Tests
@@ -20,6 +23,15 @@ namespace Structurizr.Api.Tests
         public void Test_Construction_WithThreeParameters()
         {
             _structurizrClient = new StructurizrClient("https://localhost", "key", "secret");
+            Assert.Equal("https://localhost", _structurizrClient.Url);
+            Assert.Equal("key", _structurizrClient.ApiKey);
+            Assert.Equal("secret", _structurizrClient.ApiSecret);
+        }
+
+        [Fact]
+        public void Test_Construction_WithFourParameters()
+        {
+            _structurizrClient = new StructurizrClient("https://localhost", "key", "secret", null);
             Assert.Equal("https://localhost", _structurizrClient.Url);
             Assert.Equal("key", _structurizrClient.ApiKey);
             Assert.Equal("secret", _structurizrClient.ApiSecret);
@@ -161,6 +173,42 @@ namespace Structurizr.Api.Tests
             {
                 Assert.Equal("The workspace must not be null.", iae.Message);
             }
+        }
+
+        [Fact]
+        public void Test_not_overriden_createHttpClient_initializes_httpClient_once()
+        {
+            var testClient = new TestStructurizrClient("key", "secret");
+            var httpClient1 = testClient.GetClient();
+            var httpClient2 = testClient.GetClient();
+
+            Assert.Equal(httpClient1.GetHashCode(), httpClient2.GetHashCode());
+        }
+
+        [Fact]
+        public void Test_not_overriden_createHttpClient_returns_injected_httpClient()
+        {
+            var httpClient = new HttpClient();
+            var testClient = new TestStructurizrClient("https://localhost", "key", "secret", httpClient);
+
+            Assert.Equal(httpClient.GetHashCode(), testClient.GetClient().GetHashCode());
+        }
+
+        [Fact]
+        public async Task Test_not_override_createHttpClient_is_thread_safe()
+        {
+            var testClient = new TestStructurizrClient("key", "secret");
+
+            var task = Task.Run(() => { Task.Delay(100); return testClient.GetClient(); });
+            var task2 = Task.Run(() => { Task.Delay(99); return testClient.GetClient(); });
+            var task3 = Task.Run(() => { Task.Delay(98); return testClient.GetClient(); });
+            var task4 = Task.Run(() => { Task.Delay(97); return testClient.GetClient(); });
+            var task5 = Task.Run(() => { Task.Delay(99); return testClient.GetClient(); });
+
+            await Task.WhenAll(task, task2, task3, task4, task5);
+
+            Assert.Equal(task.Result.GetHashCode(), task2.Result.GetHashCode());
+            Assert.Equal(task2.Result.GetHashCode(), task3.Result.GetHashCode());
         }
     }
 }
