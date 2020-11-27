@@ -15,11 +15,6 @@ namespace Structurizr.Client.Tests.Api
         {
         }
 
-        public TestStructurizrClient(string apiUrl, string apiKey, string apiSecret, HttpClient httpClient)
-            : base(apiUrl, apiKey, apiSecret, httpClient)
-        {
-        }
-
         public HttpClient GetClient() => base.createHttpClient();
     }
 }

@@ -29,15 +29,6 @@ namespace Structurizr.Api.Tests
         }
 
         [Fact]
-        public void Test_Construction_WithFourParameters()
-        {
-            _structurizrClient = new StructurizrClient("https://localhost", "key", "secret", null);
-            Assert.Equal("https://localhost", _structurizrClient.Url);
-            Assert.Equal("key", _structurizrClient.ApiKey);
-            Assert.Equal("secret", _structurizrClient.ApiSecret);
-        }
-
-        [Fact]
         public void Test_Construction_WithThreeParameters_TruncatesTheApiUrl_WhenTheApiUrlHasATrailingSlashCharacter()
         {
             _structurizrClient = new StructurizrClient("https://localhost/", "key", "secret");
@@ -183,15 +174,6 @@ namespace Structurizr.Api.Tests
             var httpClient2 = testClient.GetClient();
 
             Assert.Equal(httpClient1.GetHashCode(), httpClient2.GetHashCode());
-        }
-
-        [Fact]
-        public void Test_not_overriden_createHttpClient_returns_injected_httpClient()
-        {
-            var httpClient = new HttpClient();
-            var testClient = new TestStructurizrClient("https://localhost", "key", "secret", httpClient);
-
-            Assert.Equal(httpClient.GetHashCode(), testClient.GetClient().GetHashCode());
         }
 
         [Fact]

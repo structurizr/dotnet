@@ -101,22 +101,10 @@ namespace Structurizr.Api
         /// <param name="apiKey">The API key of your workspace.</param>
         /// <param name="apiSecret">The API secret of your workspace.</param>
         public StructurizrClient(string apiUrl, string apiKey, string apiSecret)
-            : this(apiUrl, apiKey, apiSecret, null)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Structurizr client with the specified API URL, key and secret.
-        /// </summary>
-        /// <param name="apiUrl">The URL of your Structurizr instance.</param>
-        /// <param name="apiKey">The API key of your workspace.</param>
-        /// <param name="apiSecret">The API secret of your workspace.</param>
-        public StructurizrClient(string apiUrl, string apiKey, string apiSecret, HttpClient httpClient)
         {
             Url = apiUrl;
             ApiKey = apiKey;
             ApiSecret = apiSecret;
-            _httpClient = httpClient;
 
             WorkspaceArchiveLocation = new DirectoryInfo(".");
             MergeFromRemote = true;
