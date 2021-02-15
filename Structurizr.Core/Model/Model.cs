@@ -413,15 +413,23 @@ namespace Structurizr
             return _deploymentNodes.FirstOrDefault(dn => dn.Environment.Equals(environment) && dn.Name.Equals(name));
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description) {
-            return AddRelationship(source, destination, description, null);
+        internal Relationship AddRelationship(Element source, Element destination, string description, string technology)
+        {
+            return AddRelationship(source, destination, description, technology, null);
+        }
+        
+        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle)
+        {
+            return AddRelationship(source, destination, description, technology, interactionStyle, new string[0], true);
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology) {
-            return AddRelationship(source, destination, description, technology, InteractionStyle.Synchronous);
+        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle, string[] tags)
+        {
+            return AddRelationship(source, destination, description, technology, interactionStyle, tags, true);
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle interactionStyle) {
+        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle, string[] tags, bool createImpliedRelationships) {
+            
             if (destination == null)
             {
                 throw new ArgumentException("The destination must be specified.");
@@ -432,7 +440,7 @@ namespace Structurizr
                 throw new ArgumentException("Relationships cannot be added between parents and children.");
             }
 
-            Relationship relationship = new Relationship(source, destination, description, technology, interactionStyle);
+            Relationship relationship = new Relationship(source, destination, description, technology, interactionStyle, tags);
             if (AddRelationship(relationship))
             {
 
@@ -450,7 +458,7 @@ namespace Structurizr
 
                 return relationship;
             }
-            
+
             return null;
         }
 
@@ -507,7 +515,7 @@ namespace Structurizr
                 throw new ArgumentException("A relationship must be specified.");
             }
 
-            Relationship newRelationship = new Relationship(relationship.Source, relationship.Destination, description, technology, relationship.InteractionStyle);
+            Relationship newRelationship = new Relationship(relationship.Source, relationship.Destination, description, technology, relationship.InteractionStyle, new string[0]);
             if (!relationship.Source.Has(newRelationship))
             {
                 relationship.Description = description;
