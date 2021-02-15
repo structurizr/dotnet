@@ -10,11 +10,14 @@ namespace Structurizr
     public abstract class DeploymentElement : Element
     {
         
-        internal static string DefaultDeploymentEnvironment = "Default";
+        internal const string DefaultDeploymentEnvironment = "Default";
 
         [DataMember(Name = "environment", EmitDefaultValue = false)]
         public string Environment { get; internal set; }
 
+        private Element _parent;
+
+        public override Element Parent { get; set; }
     }
 
 }

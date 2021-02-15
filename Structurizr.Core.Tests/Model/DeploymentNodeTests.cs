@@ -14,7 +14,7 @@ namespace Structurizr.Core.Tests
             DeploymentNode deploymentNode = new DeploymentNode();
             deploymentNode.Name = "Ubuntu Server";
 
-            Assert.Equal("/Deployment/Default/Ubuntu Server", deploymentNode.CanonicalName);
+            Assert.Equal("DeploymentNode://Default/Ubuntu Server", deploymentNode.CanonicalName);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Structurizr.Core.Tests
             child.Name = "Apache Tomcat";
             child.Parent = parent;
 
-            Assert.Equal("/Deployment/Default/Ubuntu Server/Apache Tomcat", child.CanonicalName);
+            Assert.Equal("DeploymentNode://Default/Ubuntu Server/Apache Tomcat", child.CanonicalName);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace Structurizr.Core.Tests
             try
             {
                 DeploymentNode deploymentNode = new DeploymentNode();
-                deploymentNode.Add(null);
+                deploymentNode.Add((Container)null);
                 throw new TestFailedException();
             }
             catch (ArgumentException ae)

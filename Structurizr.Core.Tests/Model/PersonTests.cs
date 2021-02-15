@@ -20,14 +20,14 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_CanonicalName()
         {
-            Assert.Equal("/Name", person.CanonicalName);
+            Assert.Equal("Person://Name", person.CanonicalName);
         }
 
         [Fact]
         public void Test_CanonicalName_WhenNameContainsASlashCharacter()
         {
             person.Name = "Name1/Name2";
-            Assert.Equal("/Name1Name2", person.CanonicalName);
+            Assert.Equal("Person://Name1Name2", person.CanonicalName);
         }
 
         [Fact]

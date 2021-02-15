@@ -15,7 +15,7 @@ namespace Structurizr
         /// The ID of this item in the model.
         /// </summary>
         [DataMember(Name = "id", EmitDefaultValue = false)]
-        public string Id { get; set; }
+        public string Id { get; internal set; }
 
         private List<string> _tags = new List<string>();
 
@@ -25,6 +25,18 @@ namespace Structurizr
                 return Enumerable.Empty<string>();
             return Tags.Split(new [] { "," }, StringSplitOptions.RemoveEmptyEntries);
         }
+        
+        public ISet<string> GetTagsAsSet()
+        {
+            ISet<string> setOfTags = new HashSet<string>(GetRequiredTags());
+            foreach (string tag in _tags)
+            {
+                setOfTags.Add(tag);
+            }
+
+            return setOfTags;
+        }
+
 
         [DataMember(Name = "tags", EmitDefaultValue = false)]
         public string Tags

@@ -93,6 +93,25 @@ namespace Structurizr
             }
         }
         
+        private HashSet<SoftwareSystemInstance> _softwareSystemInstances;
+        
+        /// <summary>
+        /// The set of software system instances associated with this deployment node.
+        /// </summary>
+        [DataMember(Name = "softwareSystemInstances", EmitDefaultValue = false)]
+        public ISet<SoftwareSystemInstance> SoftwareSystemInstances
+        {
+            get
+            {
+                return new HashSet<SoftwareSystemInstance>(_softwareSystemInstances);
+            }
+
+            internal set
+            {
+                _softwareSystemInstances = new HashSet<SoftwareSystemInstance>(value);
+            }
+        }
+
         private HashSet<ContainerInstance> _containerInstances;
         
         /// <summary>
@@ -117,6 +136,7 @@ namespace Structurizr
             Instances = 1;
             _children = new HashSet<DeploymentNode>();
             _infrastructureNodes = new HashSet<InfrastructureNode>();
+            _softwareSystemInstances = new HashSet<SoftwareSystemInstance>();
             _containerInstances = new HashSet<ContainerInstance>();
             Environment = DefaultDeploymentEnvironment;
         }
@@ -134,15 +154,47 @@ namespace Structurizr
         {
             get
             {
-                if (_parent != null)
-                {
-                    return _parent.CanonicalName + CanonicalNameSeparator + FormatForCanonicalName(Name);
-                }
-                else
-                {
-                    return CanonicalNameSeparator + "Deployment" + CanonicalNameSeparator + FormatForCanonicalName(Environment) + CanonicalNameSeparator + FormatForCanonicalName(Name);
-                }
+                return new CanonicalNameGenerator().Generate(this);
             }
+        }
+
+        /// <summary>
+        /// Adds a software system instance to this deployment node, replicating relationships.
+        /// </summary>
+        /// <param name="softwareSystem">the SoftwareSystem to add an instance of</param>
+        /// <returns>a SoftwareSystemInstance object</returns>
+        public SoftwareSystemInstance Add(SoftwareSystem softwareSystem)
+        {
+            return Add(softwareSystem, true);
+        }
+
+        /// <summary>
+        /// Adds a software system instance to this deployment node, optionally replicating relationships.
+        /// </summary>
+        /// <param name="softwareSystem">the SoftwareSystem to add an instance of</param>
+        /// <param name="replicateRelationships">true if relationships should be replicated between the element instances in the same deployment environment, false otherwise</param>
+        /// <returns>a SoftwareSystemInstance object</returns>
+        public SoftwareSystemInstance Add(SoftwareSystem softwareSystem, bool replicateRelationships)
+        {
+            if (softwareSystem == null)
+            {
+                throw new ArgumentException("A software system must be specified.");
+            }
+
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(this, softwareSystem, replicateRelationships);
+            _softwareSystemInstances.Add(softwareSystemInstance);
+    
+            return softwareSystemInstance;
+        }
+
+        /// <summary>
+        /// Adds a container instance to this deployment node, replicating relationships.
+        /// </summary>
+        /// <param name="container">the Container to add an instance of</param>
+        /// <returns>a ContainerInstance object</returns>
+        public ContainerInstance Add(Container container)
+        {
+            return Add(container, true);
         }
 
         /// <summary>
@@ -150,12 +202,14 @@ namespace Structurizr
         /// </summary>
         /// <param name="container">the Container to add an instance of</param>
         /// <returns>a ContainerInstance object</returns>
-        public ContainerInstance Add(Container container) {
-            if (container == null) {
+        public ContainerInstance Add(Container container, bool replicateRelationships)
+        {
+            if (container == null)
+            {
                 throw new ArgumentException("A container must be specified.");
             }
 
-            ContainerInstance containerInstance = Model.AddContainerInstance(this, container);
+            ContainerInstance containerInstance = Model.AddContainerInstance(this, container, replicateRelationships);
             _containerInstances.Add(containerInstance);
     
             return containerInstance;

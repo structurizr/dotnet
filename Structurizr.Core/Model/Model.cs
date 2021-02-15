@@ -91,6 +91,17 @@ namespace Structurizr
         /// (unless one exists with the same name already).
         /// </summary>
         /// <param name="Name">The name of the software system</param>
+        /// <returns>the SoftwareSystem instance created and added to the model (or null)</returns>
+        public SoftwareSystem AddSoftwareSystem(string name)
+        {
+            return AddSoftwareSystem(Location.Unspecified, name, "");
+        }
+
+        /// <summary>
+        /// Creates a software system (location is unspecified) and adds it to the model
+        /// (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="Name">The name of the software system</param>
         /// <param name="Description">A short description of the software syste.</param>
         /// <returns>the SoftwareSystem instance created and added to the model (or null)</returns>
         public SoftwareSystem AddSoftwareSystem(string name, string description)
@@ -126,6 +137,17 @@ namespace Structurizr
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Creates a person (location is unspecified) and adds it to the model
+        /// (unless one exists with the same name already.
+        /// </summary>
+        /// <param name="name">the name of the person (e.g. "Admin User" or "Bob the Business User")</param>
+        /// <returns>the Person instance created and added to the model (or null)</returns>
+        public Person AddPerson(string name)
+        {
+            return AddPerson(Location.Unspecified, name, "");
         }
 
         /// <summary>
@@ -191,45 +213,41 @@ namespace Structurizr
             }
         }
         
-        internal ContainerInstance AddContainerInstance(DeploymentNode deploymentNode, Container container) {
+        internal SoftwareSystemInstance AddSoftwareSystemInstance(DeploymentNode deploymentNode, SoftwareSystem softwareSystem, bool replicateRelationships)
+        {
+            if (softwareSystem == null) {
+                throw new ArgumentException("A software system must be specified.");
+            }
+
+            long instanceNumber = deploymentNode.SoftwareSystemInstances.Count(ssi => ssi.SoftwareSystem.Equals(softwareSystem));
+            instanceNumber++;
+            SoftwareSystemInstance softwareSystemInstance = new SoftwareSystemInstance(softwareSystem, (int)instanceNumber, deploymentNode.Environment);
+            softwareSystemInstance.Parent = deploymentNode;
+            softwareSystemInstance.Id = IdGenerator.GenerateId(softwareSystemInstance);
+
+            if (replicateRelationships) {
+                ReplicateElementRelationships(deploymentNode.Environment, softwareSystemInstance);
+            }
+
+            AddElementToInternalStructures(softwareSystemInstance);
+
+            return softwareSystemInstance;
+        }
+
+        internal ContainerInstance AddContainerInstance(DeploymentNode deploymentNode, Container container, bool replicateRelationships)
+        {
             if (container == null) {
                 throw new ArgumentException("A container must be specified.");
             }
 
-            long instanceNumber = GetElements().Count(e => e is ContainerInstance && ((ContainerInstance)e).Container.Equals(container));
+            long instanceNumber = deploymentNode.ContainerInstances.Count(ci => ci.Container.Equals(container));
             instanceNumber++;
             ContainerInstance containerInstance = new ContainerInstance(container, (int)instanceNumber, deploymentNode.Environment);
-            containerInstance.Id = _idGenerator.GenerateId(containerInstance);
+            containerInstance.Parent = deploymentNode;
+            containerInstance.Id = IdGenerator.GenerateId(containerInstance);
 
-            // find all ContainerInstance objects in the same deployment environment
-            IEnumerable<ContainerInstance> containerInstances = GetElements().OfType<ContainerInstance>().Where(ci => ci.Environment.Equals(deploymentNode.Environment));
-
-            // and replicate the container-container relationships within the same deployment environment
-            foreach (ContainerInstance ci in containerInstances)
-            {
-                Container c = ci.Container;
-
-                foreach (Relationship relationship in container.Relationships) {
-                    if (relationship.Destination.Equals(c)) {
-                        Relationship newRelationship = AddRelationship(containerInstance, ci, relationship.Description, relationship.Technology, relationship.InteractionStyle);
-                        if (newRelationship != null)
-                        {
-                            newRelationship.Tags = String.Empty;
-                            newRelationship.LinkedRelationshipId = relationship.Id;
-                        }
-                    }
-                }
-
-                foreach (Relationship relationship in c.Relationships) {
-                    if (relationship.Destination.Equals(container)) {
-                        Relationship newRelationship = AddRelationship(ci, containerInstance, relationship.Description, relationship.Technology, relationship.InteractionStyle);
-                        if (newRelationship != null)
-                        {
-                            newRelationship.Tags = String.Empty;
-                            newRelationship.LinkedRelationshipId = relationship.Id;
-                        }
-                    }
-                }
+            if (replicateRelationships) {
+                ReplicateElementRelationships(deploymentNode.Environment, containerInstance);
             }
 
             AddElementToInternalStructures(containerInstance);
@@ -237,6 +255,37 @@ namespace Structurizr
             return containerInstance;
         }
 
+        private void ReplicateElementRelationships(string deploymentEnvironment, StaticStructureElementInstance elementInstance) {
+            StaticStructureElement element = elementInstance.getElement();
+
+            IEnumerable<StaticStructureElementInstance> elementInstances = GetElements().OfType<StaticStructureElementInstance>().Where(ssei => ssei.Environment.Equals(deploymentEnvironment));
+
+            // and replicate the relationships within the same deployment environment
+            foreach (StaticStructureElementInstance ssei in elementInstances) {
+                StaticStructureElement sse = ssei.getElement();
+
+                foreach (Relationship relationship in element.Relationships) {
+                    if (relationship.Destination.Equals(sse)) {
+                        Relationship newRelationship = AddRelationship(elementInstance, ssei, relationship.Description, relationship.Technology, relationship.InteractionStyle);
+                        if (newRelationship != null) {
+                            newRelationship.Tags = null;
+                            newRelationship.LinkedRelationshipId = relationship.Id;
+                        }
+                    }
+                }
+
+                foreach (Relationship relationship in sse.Relationships) {
+                    if (relationship.Destination.Equals(element)) {
+                        Relationship newRelationship = AddRelationship(ssei, elementInstance, relationship.Description, relationship.Technology, relationship.InteractionStyle);
+                        if (newRelationship != null) {
+                            newRelationship.Tags = null;
+                            newRelationship.LinkedRelationshipId = relationship.Id;
+                        }
+                    }
+                }
+            }
+        }
+    
         internal Component AddComponent(Container parent, string name, string type, string description, string technology)
         {
             if (parent.GetComponentWithName(name) == null)
@@ -606,12 +655,6 @@ namespace Structurizr
             if (string.IsNullOrWhiteSpace(canonicalName))
             {
                 throw new ArgumentException("A canonical name must be specified.");
-            }
-
-            // canonical names start with a leading slash, so add this if it's missing
-            if (!canonicalName.StartsWith("/"))
-            {
-                canonicalName = "/" + canonicalName;
             }
 
             return _elementsById.Values.FirstOrDefault(x => x.CanonicalName == canonicalName);

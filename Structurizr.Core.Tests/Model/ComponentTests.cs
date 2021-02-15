@@ -31,14 +31,14 @@ namespace Structurizr.Core.Tests
         public void Test_CanonicalName()
         {
             Component component = container.AddComponent("Component", "Description");
-            Assert.Equal("/System/Container/Component", component.CanonicalName);
+            Assert.Equal("Component://System.Container.Component", component.CanonicalName);
         }
 
         [Fact]
         public void Test_CanonicalName_WhenNameContainsASlashCharacter()
         {
             Component component = container.AddComponent("Name1/Name2", "Description");
-            Assert.Equal("/System/Container/Name1Name2", component.CanonicalName);
+            Assert.Equal("Component://System.Container.Name1Name2", component.CanonicalName);
         }
 
         [Fact]

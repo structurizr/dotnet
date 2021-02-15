@@ -22,14 +22,14 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_CanonicalName()
         {
-            Assert.Equal("/System/Container", container.CanonicalName);
+            Assert.Equal("Container://System.Container", container.CanonicalName);
         }
 
         [Fact]
         public void Test_CanonicalName_WhenNameContainsASlashCharacter()
         {
             container.Name = "Name1/Name2";
-            Assert.Equal("/System/Name1Name2", container.CanonicalName);
+            Assert.Equal("Container://System.Name1Name2", container.CanonicalName);
         }
 
         [Fact]

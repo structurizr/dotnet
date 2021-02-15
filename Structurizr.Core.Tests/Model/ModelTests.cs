@@ -10,7 +10,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_AddContainerInstance_ThrowsAnException_WhenANullContainerIsSpecified() {
             try {
-                Model.AddContainerInstance(null, null);
+                Model.AddContainerInstance(null, null, true);
                 throw new TestFailedException();
             } catch (ArgumentException ae) {
                 Assert.Equal("A container must be specified.", ae.Message);
@@ -33,9 +33,9 @@ namespace Structurizr.Core.Tests
             container1.Uses(container2, "Uses 1", "Technology 1", InteractionStyle.Synchronous);
             container2.Uses(container3, "Uses 2", "Technology 2", InteractionStyle.Asynchronous);
     
-            ContainerInstance containerInstance1 = Model.AddContainerInstance(developmentDeploymentNode, container1);
-            ContainerInstance containerInstance2 = Model.AddContainerInstance(developmentDeploymentNode, container2);
-            ContainerInstance containerInstance3 = Model.AddContainerInstance(developmentDeploymentNode, container3);
+            ContainerInstance containerInstance1 = Model.AddContainerInstance(developmentDeploymentNode, container1, true);
+            ContainerInstance containerInstance2 = Model.AddContainerInstance(developmentDeploymentNode, container2, true);
+            ContainerInstance containerInstance3 = Model.AddContainerInstance(developmentDeploymentNode, container3, true);
     
             // the following live container instances should not affect the relationships of the development container instances
             DeploymentNode liveDeploymentNode = Model.AddDeploymentNode("Live", "Deployment Node", "Description", "Technology");
@@ -45,8 +45,8 @@ namespace Structurizr.Core.Tests
 
             Assert.Same(container2, containerInstance2.Container);
             Assert.Equal(container2.Id, containerInstance2.ContainerId);
-            Assert.Same(softwareSystem2, containerInstance2.Parent);
-            Assert.Equal("/Software System 2/Container 2[1]", containerInstance2.CanonicalName);
+            Assert.Same(developmentDeploymentNode, containerInstance2.Parent);
+            Assert.Equal("ContainerInstance://Development/Deployment Node/Software System 2.Container 2[1]", containerInstance2.CanonicalName);
             Assert.Equal("Container Instance", containerInstance2.Tags);
             Assert.Equal("Development", containerInstance2.Environment);
     
@@ -318,12 +318,10 @@ namespace Structurizr.Core.Tests
         {
             SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System", "Description");
 
-            Assert.Same(Model.GetElementWithCanonicalName("/Software System"), softwareSystem);
-            Assert.Same(Model.GetElementWithCanonicalName("Software System"), softwareSystem);
+            Assert.Same(softwareSystem, Model.GetElementWithCanonicalName("SoftwareSystem://Software System"));
 
             Container container = softwareSystem.AddContainer("Web Application", "Description", "Technology");
-            Assert.Same(container, Model.GetElementWithCanonicalName("/Software System/Web Application"));
-            Assert.Same(container, Model.GetElementWithCanonicalName("Software System/Web Application"));
+            Assert.Same(container, Model.GetElementWithCanonicalName("Container://Software System.Web Application"));
         }
         
         [Fact]

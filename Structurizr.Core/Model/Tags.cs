@@ -16,6 +16,7 @@
 
         public const string DeploymentNode = "Deployment Node";
         public const string InfrastructureNode = "Infrastructure Node";
+        public const string SoftwareSystemInstance = "Software System Instance";
         public const string ContainerInstance = "Container Instance";
         
     }

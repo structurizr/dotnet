@@ -13,8 +13,6 @@ namespace Structurizr
     public abstract class Element : ModelItem
     {
 
-        public const string CanonicalNameSeparator = "/";
-
         /// <summary>
         /// The name of this element.
         /// </summary>
@@ -114,6 +112,18 @@ namespace Structurizr
         }
 
         /// <summary>
+        /// Determines whether this element has an efferent (outgoing) relationship with
+        /// the specified element and description.
+        /// </summary>
+        /// <param name="element">the element to look for</param>
+        /// <param name="description">the relationship description</param>
+        /// <returns>true if this element has an efferent relationship with the specified element and description, false otherwise</returns>
+        public bool HasEfferentRelationshipWith(Element element, string description)
+        {
+            return GetEfferentRelationshipWith(element, description) != null;
+        }
+
+        /// <summary>
         /// Gets the efferent (outgoing) relationship with the specified element.
         /// </summary>
         /// <param name="element">the element to look for</param>
@@ -135,11 +145,36 @@ namespace Structurizr
 
             return null;
         }
-
-        protected string FormatForCanonicalName(String name)
+        
+        /// <summary>
+        /// Gets the efferent (outgoing) relationship with the specified element and description.
+        /// </summary>
+        /// <param name="element">the element to look for</param>
+        /// <param name="description">the relationship description</param>
+        /// <returns>a Relationship object, or null if the specified relationship doesn't exist</returns>
+        public Relationship GetEfferentRelationshipWith(Element element, string description)
         {
-            return name.Replace(CanonicalNameSeparator, "");
+            if (element == null)
+            {
+                return null;
+            }
+
+            if (description == null)
+            {
+                description = "";
+            }
+
+            foreach (Relationship relationship in Relationships)
+            {
+                if (relationship.Destination.Equals(element) && description.Equals(relationship.Description))
+                {
+                    return relationship;
+                }
+            }
+
+            return null;
         }
+
 
         public override string ToString()
         {

@@ -46,7 +46,7 @@ namespace Structurizr
         {
             get
             {
-                return _parent.CanonicalName + CanonicalNameSeparator + FormatForCanonicalName(Name);
+                return new CanonicalNameGenerator().Generate(this);
             }
         }
 

@@ -3,6 +3,8 @@
 ## 1.0.0 (unreleased)
 
 - Improved the support for creating [implied relationships](docs/implied-relationships.md).
+- Adds support for software system instances.
+- `Parent` of `SoftwareSystemInstance` and `ContainerInstance` now returns the parent deployment node.
 - Adds support for element groups.
 ## 0.9.7 (29th June 2020)
 
