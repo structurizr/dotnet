@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using Structurizr.Api;
 using Structurizr.Core.Util;
 using Structurizr.Documentation;
@@ -30,6 +32,7 @@ namespace Structurizr.Examples
         {
                 Workspace workspace = new Workspace("Big Bank plc", "This is an example workspace to illustrate the key features of Structurizr, based around a fictional online banking system.");
                 Model model = workspace.Model;
+                model.ImpliedRelationshipsStrategy = new CreateImpliedRelationshipsUnlessAnyRelationshipExistsStrategy();
                 ViewSet views = workspace.Views;
         
                 model.Enterprise = new Enterprise("Big Bank plc");
@@ -101,50 +104,52 @@ namespace Structurizr.Examples
                 mainframeBankingSystemFacade.Uses(mainframeBankingSystem, "Uses", "XML/HTTPS");
                 emailComponent.Uses(emailSystem, "Sends e-mail using");
         
-                model.AddImplicitRelationships();
-        
                 // deployment nodes and container instances
                 DeploymentNode developerLaptop = model.AddDeploymentNode("Development", "Developer Laptop", "A developer laptop.", "Microsoft Windows 10 or Apple macOS");
                 DeploymentNode apacheTomcat = developerLaptop.AddDeploymentNode("Docker Container - Web Server", "A Docker container.", "Docker")
                         .AddDeploymentNode("Apache Tomcat", "An open source Java EE web server.", "Apache Tomcat 8.x", 1, DictionaryUtils.Create("Xmx=512M", "Xms=1024M", "Java Version=8"));
-                apacheTomcat.Add(webApplication);
-                apacheTomcat.Add(apiApplication);
-        
-                developerLaptop.AddDeploymentNode("Docker Container - Database Server", "A Docker container.", "Docker")
+                ContainerInstance developmentWebApplication = apacheTomcat.Add(webApplication);
+                ContainerInstance developmentApiApplication = apacheTomcat.Add(apiApplication);
+
+                DeploymentNode bigBankDataCenterForDevelopment = model.AddDeploymentNode("Development", "Big Bank plc", "", "Big Bank plc data center");
+                SoftwareSystemInstance developmentMainframeBankingSystem = bigBankDataCenterForDevelopment.AddDeploymentNode("bigbank-dev001").Add(mainframeBankingSystem);
+
+                ContainerInstance developmentDatabase = developerLaptop.AddDeploymentNode("Docker Container - Database Server", "A Docker container.", "Docker")
                         .AddDeploymentNode("Database Server", "A development database.", "Oracle 12c")
                         .Add(database);
-        
-                developerLaptop.AddDeploymentNode("Web Browser", "", "Chrome, Firefox, Safari, or Edge").Add(singlePageApplication);
-        
-                DeploymentNode customerMobileDevice = model.AddDeploymentNode("Live", "Customer's mobile device", "", "Apple iOS or Android");
-                customerMobileDevice.Add(mobileApp);
-        
-                DeploymentNode customerComputer = model.AddDeploymentNode("Live", "Customer's computer", "", "Microsoft Windows or Apple macOS");
-                customerComputer.AddDeploymentNode("Web Browser", "", "Chrome, Firefox, Safari, or Edge").Add(singlePageApplication);
-        
-                DeploymentNode bigBankDataCenter = model.AddDeploymentNode("Live", "Big Bank plc", "", "Big Bank plc data center");
-        
-                DeploymentNode liveWebServer = bigBankDataCenter.AddDeploymentNode("bigbank-web***", "A web server residing in the web server farm, accessed via F5 BIG-IP LTMs.", "Ubuntu 16.04 LTS", 4, DictionaryUtils.Create("Location=London and Reading"));
-                liveWebServer.AddDeploymentNode("Apache Tomcat", "An open source Java EE web server.", "Apache Tomcat 8.x", 1, DictionaryUtils.Create("Xmx=512M", "Xms=1024M", "Java Version=8"))
-                        .Add(webApplication);
-        
-                DeploymentNode liveApiServer = bigBankDataCenter.AddDeploymentNode("bigbank-api***", "A web server residing in the web server farm, accessed via F5 BIG-IP LTMs.", "Ubuntu 16.04 LTS", 8, DictionaryUtils.Create("Location=London and Reading"));
-                liveApiServer.AddDeploymentNode("Apache Tomcat", "An open source Java EE web server.", "Apache Tomcat 8.x", 1, DictionaryUtils.Create("Xmx=512M", "Xms=1024M", "Java Version=8"))
-                        .Add(apiApplication);
-        
-                DeploymentNode primaryDatabaseServer = bigBankDataCenter.AddDeploymentNode("bigbank-db01", "The primary database server.", "Ubuntu 16.04 LTS", 1, DictionaryUtils.Create("Location=London"))
-                        .AddDeploymentNode("Oracle - Primary", "The primary, live database server.", "Oracle 12c");
-                primaryDatabaseServer.Add(database);
 
-                DeploymentNode bigBankdb02 = bigBankDataCenter.AddDeploymentNode("bigbank-db02", "The secondary database server.", "Ubuntu 16.04 LTS", 1, DictionaryUtils.Create("Location=Reading"));
+                ContainerInstance developmentSinglePageApplication = developerLaptop.AddDeploymentNode("Web Browser", "", "Chrome, Firefox, Safari, or Edge").Add(singlePageApplication);
+
+                DeploymentNode customerMobileDevice = model.AddDeploymentNode("Live", "Customer's mobile device", "", "Apple iOS or Android");
+                ContainerInstance liveMobileApp = customerMobileDevice.Add(mobileApp);
+
+                DeploymentNode customerComputer = model.AddDeploymentNode("Live", "Customer's computer", "", "Microsoft Windows or Apple macOS");
+                ContainerInstance liveSinglePageApplication = customerComputer.AddDeploymentNode("Web Browser", "", "Chrome, Firefox, Safari, or Edge").Add(singlePageApplication);
+
+                DeploymentNode bigBankDataCenterForLive = model.AddDeploymentNode("Live", "Big Bank plc", "", "Big Bank plc data center");
+                SoftwareSystemInstance liveMainframeBankingSystem = bigBankDataCenterForLive.AddDeploymentNode("bigbank-prod001").Add(mainframeBankingSystem);
+
+                DeploymentNode liveWebServer = bigBankDataCenterForLive.AddDeploymentNode("bigbank-web***", "A web server residing in the web server farm, accessed via F5 BIG-IP LTMs.", "Ubuntu 16.04 LTS", 4, DictionaryUtils.Create("Location=London and Reading"));
+                ContainerInstance liveWebApplication = liveWebServer.AddDeploymentNode("Apache Tomcat", "An open source Java EE web server.", "Apache Tomcat 8.x", 1, DictionaryUtils.Create("Xmx=512M", "Xms=1024M", "Java Version=8"))
+                        .Add(webApplication);
+
+                DeploymentNode liveApiServer = bigBankDataCenterForLive.AddDeploymentNode("bigbank-api***", "A web server residing in the web server farm, accessed via F5 BIG-IP LTMs.", "Ubuntu 16.04 LTS", 8, DictionaryUtils.Create("Location=London and Reading"));
+                ContainerInstance liveApiApplication = liveApiServer.AddDeploymentNode("Apache Tomcat", "An open source Java EE web server.", "Apache Tomcat 8.x", 1, DictionaryUtils.Create("Xmx=512M", "Xms=1024M", "Java Version=8"))
+                        .Add(apiApplication);
+
+                DeploymentNode primaryDatabaseServer = bigBankDataCenterForLive.AddDeploymentNode("bigbank-db01", "The primary database server.", "Ubuntu 16.04 LTS", 1, DictionaryUtils.Create("Location=London"))
+                        .AddDeploymentNode("Oracle - Primary", "The primary, live database server.", "Oracle 12c");
+                ContainerInstance livePrimaryDatabase = primaryDatabaseServer.Add(database);
+
+                DeploymentNode bigBankdb02 = bigBankDataCenterForLive.AddDeploymentNode("bigbank-db02", "The secondary database server.", "Ubuntu 16.04 LTS", 1, DictionaryUtils.Create("Location=Reading"));
                 bigBankdb02.AddTags(FailoverTag);
                 DeploymentNode secondaryDatabaseServer = bigBankdb02.AddDeploymentNode("Oracle - Secondary", "A secondary, standby database server, used for failover purposes only.", "Oracle 12c");
                 secondaryDatabaseServer.AddTags(FailoverTag);
-                ContainerInstance secondaryDatabase = secondaryDatabaseServer.Add(database);
-        
-                model.Relationships.Where(r=>r.Destination.Equals(secondaryDatabase)).ToList().ForEach(r=>r.AddTags(FailoverTag));
+                ContainerInstance liveSecondaryDatabase = secondaryDatabaseServer.Add(database);
+
+                model.Relationships.Where(r=>r.Destination.Equals(liveSecondaryDatabase)).ToList().ForEach(r=>r.AddTags(FailoverTag));
                 Relationship dataReplicationRelationship = primaryDatabaseServer.Uses(secondaryDatabaseServer, "Replicates data to", "");
-                secondaryDatabase.AddTags(FailoverTag);
+                liveSecondaryDatabase.AddTags(FailoverTag);
 
                 // views/diagrams
                 SystemLandscapeView systemLandscapeView = views.CreateSystemLandscapeView("SystemLandscape", "The system landscape diagram for Big Bank plc.");
@@ -203,15 +208,28 @@ namespace Structurizr.Examples
                 DeploymentView developmentDeploymentView = views.CreateDeploymentView(internetBankingSystem, "DevelopmentDeployment", "An example development deployment scenario for the Internet Banking System.");
                 developmentDeploymentView.Environment = "Development";
                 developmentDeploymentView.Add(developerLaptop);
+                developmentDeploymentView.Add(bigBankDataCenterForDevelopment);
                 developmentDeploymentView.PaperSize = PaperSize.A5_Landscape;
-        
+
+                developmentDeploymentView.AddAnimation(developmentSinglePageApplication);
+                developmentDeploymentView.AddAnimation(developmentWebApplication, developmentApiApplication);
+                developmentDeploymentView.AddAnimation(developmentDatabase);
+                //developmentDeploymentView.AddAnimation(developmentMainframeBankingSystem);
+
                 DeploymentView liveDeploymentView = views.CreateDeploymentView(internetBankingSystem, "LiveDeployment", "An example live deployment scenario for the Internet Banking System.");
                 liveDeploymentView.Environment = "Live";
-                liveDeploymentView.Add(bigBankDataCenter);
+                liveDeploymentView.Add(bigBankDataCenterForLive);
                 liveDeploymentView.Add(customerMobileDevice);
                 liveDeploymentView.Add(customerComputer);
                 liveDeploymentView.Add(dataReplicationRelationship);
                 liveDeploymentView.PaperSize = PaperSize.A5_Landscape;
+
+                liveDeploymentView.AddAnimation(liveSinglePageApplication);
+                liveDeploymentView.AddAnimation(liveMobileApp);
+                liveDeploymentView.AddAnimation(liveWebApplication, liveApiApplication);
+                liveDeploymentView.AddAnimation(livePrimaryDatabase);
+                liveDeploymentView.AddAnimation(liveSecondaryDatabase);
+                //liveDeploymentView.AddAnimation(liveMainframeBankingSystem);
 
                 // colours, shapes and other diagram styling
                 Styles styles = views.Configuration.Styles;
