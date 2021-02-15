@@ -33,17 +33,64 @@ namespace Structurizr
 
         DeploymentView()
         {
+            Environment = DeploymentElement.DefaultDeploymentEnvironment;
         }
 
         internal DeploymentView(Model model, string key, string description) : base(null, key, description)
         {
             Model = model;
+            Environment = DeploymentElement.DefaultDeploymentEnvironment;
         }
 
         internal DeploymentView(SoftwareSystem softwareSystem, string key, string description) : base(softwareSystem,
             key, description)
         {
             Model = softwareSystem.Model;
+            Environment = DeploymentElement.DefaultDeploymentEnvironment;
+        }
+
+        protected override void CheckElementCanBeAdded(Element elementToBeAdded)
+        {
+            if (!(elementToBeAdded is DeploymentElement))
+            {
+                throw new ElementNotPermittedInViewException("Only deployment nodes, infrastructure nodes, software system instances, and container instances can be added to deployment views.");
+            }
+
+            DeploymentElement deploymentElementToBeAdded = (DeploymentElement) elementToBeAdded;
+            if (!deploymentElementToBeAdded.Environment.Equals(this.Environment)) {
+                throw new ElementNotPermittedInViewException("Only elements in the " + this.Environment + " deployment environment can be added to this view.");
+            }
+
+            if (this.SoftwareSystem != null && elementToBeAdded is SoftwareSystemInstance) {
+                SoftwareSystemInstance ssi = (SoftwareSystemInstance) elementToBeAdded;
+
+                if (ssi.SoftwareSystem.Equals(this.SoftwareSystem)) {
+                    // adding an instance of the scoped software system isn't permitted
+                    throw new ElementNotPermittedInViewException("The software system in scope cannot be added to a deployment view.");
+                }
+            }
+
+            /*
+            if (elementToBeAdded is SoftwareSystemInstance) {
+                // check that a child container instance hasn't been added already
+                SoftwareSystemInstance softwareSystemInstanceToBeAdded = (SoftwareSystemInstance) elementToBeAdded;
+                ISet<string> softwareSystemIds = Elements.stream().map(ElementView::getElement).filter(e -> e instanceof ContainerInstance).map(e -> (ContainerInstance)e).map(ci -> ci.getContainer().getSoftwareSystem().getId()).collect(Collectors.toSet());
+
+                if (softwareSystemIds.Contains(softwareSystemInstanceToBeAdded.SoftwareSystemId)) {
+                    throw new ElementNotPermittedInViewException("A child of " + elementToBeAdded.Name + " is already in this view.");
+                }
+            }
+
+            if (elementToBeAdded is ContainerInstance) {
+                // check that the parent software system instance hasn't been added already
+                ContainerInstance containerInstanceToBeAdded = (ContainerInstance)elementToBeAdded;
+                ISet<String> softwareSystemIds = Elements.stream().map(ElementView::getElement).filter(e -> e instanceof SoftwareSystemInstance).map(e -> (SoftwareSystemInstance)e).map(SoftwareSystemInstance::getSoftwareSystemId).collect(Collectors.toSet());
+
+                if (softwareSystemIds.Contains(containerInstanceToBeAdded.Container.SoftwareSystem.Id)) {
+                    throw new ElementNotPermittedInViewException("The parent of " + elementToBeAdded.Name + " is already in this view.");
+                }
+            }
+            */
         }
 
         /// <summary>
@@ -91,45 +138,63 @@ namespace Structurizr
                 throw new ArgumentException("A deployment node must be specified.");
             }
 
-            if (AddContainerInstancesAndDeploymentNodesAndInfrastructureNodes(deploymentNode, addRelationships))
+            if (AddElementInstancesAndDeploymentNodesAndInfrastructureNodes(deploymentNode, addRelationships))
             {
                 Element parent = deploymentNode.Parent;
                 while (parent != null)
                 {
-                    AddElement(parent, false);
+                    AddElement(parent, addRelationships);
                     parent = parent.Parent;
                 }
             }
         }
 
-        private bool AddContainerInstancesAndDeploymentNodesAndInfrastructureNodes(DeploymentNode deploymentNode, bool addRelationships)
+        private bool AddElementInstancesAndDeploymentNodesAndInfrastructureNodes(DeploymentNode deploymentNode, bool addRelationships)
         {
-            bool hasContainersOrInfrastructureNodes = false;
-            foreach (ContainerInstance containerInstance in deploymentNode.ContainerInstances) {
-                Container container = containerInstance.Container;
-                if (SoftwareSystem == null || container.Parent.Equals(SoftwareSystem))
-                {
-                    AddElement(containerInstance, addRelationships);
-                    hasContainersOrInfrastructureNodes = true;
+            bool hasElementsInstancesOrInfrastructureNodes = false;
+            
+            foreach (SoftwareSystemInstance softwareSystemInstance in deploymentNode.SoftwareSystemInstances)
+            {
+                try {
+                    AddElement(softwareSystemInstance, addRelationships);
+                    hasElementsInstancesOrInfrastructureNodes = true;
+                } catch (ElementNotPermittedInViewException e) {
+                    // the element can't be added, so ignore it
                 }
             }
 
-            foreach (InfrastructureNode infrastructureNode in deploymentNode.InfrastructureNodes) {
+            foreach (ContainerInstance containerInstance in deploymentNode.ContainerInstances)
+            {
+                Container container = containerInstance.Container;
+                if (SoftwareSystem == null || container.Parent.Equals(SoftwareSystem))
+                {
+                    try
+                    {
+                        AddElement(containerInstance, addRelationships);
+                        hasElementsInstancesOrInfrastructureNodes = true;
+                    } catch (ElementNotPermittedInViewException e) {
+                        // the element can't be added, so ignore it
+                    }
+                }
+            }
+
+            foreach (InfrastructureNode infrastructureNode in deploymentNode.InfrastructureNodes)
+            {
                 AddElement(infrastructureNode, addRelationships);
-                hasContainersOrInfrastructureNodes = true;
+                hasElementsInstancesOrInfrastructureNodes = true;
             }
 
             foreach (DeploymentNode child in deploymentNode.Children)
             {
-                hasContainersOrInfrastructureNodes = hasContainersOrInfrastructureNodes | AddContainerInstancesAndDeploymentNodesAndInfrastructureNodes(child, addRelationships);
+                hasElementsInstancesOrInfrastructureNodes = hasElementsInstancesOrInfrastructureNodes | AddElementInstancesAndDeploymentNodesAndInfrastructureNodes(child, addRelationships);
             }
 
-            if (hasContainersOrInfrastructureNodes)
+            if (hasElementsInstancesOrInfrastructureNodes)
             {
                 AddElement(deploymentNode, addRelationships);
             }
 
-            return hasContainersOrInfrastructureNodes;
+            return hasElementsInstancesOrInfrastructureNodes;
         }
 
         /// <summary>

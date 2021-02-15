@@ -7,7 +7,7 @@ namespace Structurizr
 {
 
     /// <summary>
-    /// A container (something that can execute code or host data).
+    /// A container (e.g. an application or data store).
     /// </summary>
     [DataContract]
     public sealed class Container : StaticStructureElement, IEquatable<Container>
@@ -61,11 +61,34 @@ namespace Structurizr
             _components = new HashSet<Component>();
         }
 
-        public Component AddComponent(string name, string description)
+        /// <summary>
+        /// Adds a component with the specified name (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="name">the name of the component</param>
+        /// <returns>a Component instance</returns>
+        public Component AddComponent(string name)
         {
-            return AddComponent(name, description, null);
+            return AddComponent(name, "");
         }
 
+        /// <summary>
+        /// Adds a component with the specified name and description (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="name">the name of the component</param>
+        /// <param name="description">a short description/list of responsibilities</param>
+        /// <returns>a Component instance</returns>
+        public Component AddComponent(string name, string description)
+        {
+            return AddComponent(name, description, "");
+        }
+
+        /// <summary>
+        /// Adds a component with the specified name, description and technology (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="name">the name of the component</param>
+        /// <param name="description">a short description/list of responsibilities</param>
+        /// <param name="technology">the technology choice</param>
+        /// <returns>a Component instance</returns>
         public Component AddComponent(string name, string description, string technology)
         {
             return AddComponent(name, (String)null, description, technology);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Structurizr
@@ -119,6 +120,87 @@ namespace Structurizr
             Element = container;
         }
 
+        protected override void CheckElementCanBeAdded(Element elementToBeAdded)
+        {
+            if (!(elementToBeAdded is StaticStructureElement))
+            {
+                throw new ElementNotPermittedInViewException(
+                    "Only people, software systems, containers and components can be added to dynamic views.");
+            }
+
+            StaticStructureElement staticStructureElementToBeAdded = (StaticStructureElement) elementToBeAdded;
+
+            // people can always be added
+            if (staticStructureElementToBeAdded is Person)
+            {
+                return;
+            }
+
+            // if the scope of this dynamic view is a software system, we only want:
+            //  - containers
+            //  - other software systems
+            if (Element is SoftwareSystem)
+            {
+                if (staticStructureElementToBeAdded.Equals(Element))
+                {
+                    throw new ElementNotPermittedInViewException(
+                        staticStructureElementToBeAdded.Name +
+                        " is already the scope of this view and cannot be added to it.");
+                }
+
+                if (staticStructureElementToBeAdded is SoftwareSystem ||
+                    staticStructureElementToBeAdded is Container) {
+                    checkParentAndChildrenHaveNotAlreadyBeenAdded(staticStructureElementToBeAdded);
+                } else if (staticStructureElementToBeAdded is Component) {
+                    throw new ElementNotPermittedInViewException(
+                        "Components can't be added to a dynamic view when the scope is a software system.");
+                }
+            }
+
+            // dynamic view with container scope:
+            //  - other containers
+            //  - components
+            if (Element is Container) {
+                if (staticStructureElementToBeAdded.Equals(Element) ||
+                    staticStructureElementToBeAdded.Equals(Element.Parent))
+                {
+                    throw new ElementNotPermittedInViewException(
+                        staticStructureElementToBeAdded.Name +
+                        " is already the scope of this view and cannot be added to it.");
+                }
+
+                checkParentAndChildrenHaveNotAlreadyBeenAdded(staticStructureElementToBeAdded);
+            }
+
+            // dynamic view with no scope
+            //  - software systems
+            if (Element == null)
+            {
+                if (!(staticStructureElementToBeAdded is SoftwareSystem)) {
+                    throw new ElementNotPermittedInViewException(
+                        "Only people and software systems can be added to this dynamic view.");
+                }
+            }
+        }
+
+        private void checkParentAndChildrenHaveNotAlreadyBeenAdded(StaticStructureElement elementToBeAdded) {
+            // check the parent hasn't been added already
+            ISet<String> elementIds = new HashSet<string>(Elements.Select(ev => ev.Element.Id));
+
+            if (elementToBeAdded.Parent != null) {
+                if (elementIds.Contains(elementToBeAdded.Parent.Id)) {
+                    throw new ElementNotPermittedInViewException("The parent of " + elementToBeAdded.Name + " is already in this view.");
+                }
+            }
+
+            // and now check a child hasn't been added already
+            ISet<String> elementParentIds = new HashSet<string>(Elements.Where(ev => ev.Element.Parent != null).Select(ev => ev.Element.Parent.Id));
+
+            if (elementParentIds.Contains(elementToBeAdded.Id)) {
+                throw new ElementNotPermittedInViewException("The child of " + elementToBeAdded.Name + " is already in this view.");
+            }
+        }
+
         public RelationshipView Add(Element source, Element destination)
         {
             return Add(source, "", destination);
@@ -126,69 +208,29 @@ namespace Structurizr
 
         public RelationshipView Add(Element source, string description, Element destination)
         {
-            if (source != null && destination != null)
-            {
-                CheckElement(source);
-                CheckElement(destination);
+            if (source == null) {
+                throw new ArgumentException("A source element must be specified.");
+            }
 
-                // check that the relationship is in the model before adding it
-                Relationship relationship = source.GetEfferentRelationshipWith(destination);
-                if (relationship != null)
-                {
-                    AddElement(source, false);
-                    AddElement(destination, false);
-                    RelationshipView relationshipView = AddRelationship(relationship, description, _sequenceNumber.GetNext());
-                    return relationshipView;
-                }
-                else
-                {
-                    throw new ArgumentException("Relationship does not exist in model");
-                }
+            if (destination == null) {
+                throw new ArgumentException("A destination element must be specified.");
+            }
+
+            CheckElementCanBeAdded(source);
+            CheckElementCanBeAdded(destination);
+
+            // check that the relationship is in the model before adding it
+            Relationship relationship = source.GetEfferentRelationshipWith(destination);
+            if (relationship != null)
+            {
+                AddElement(source, false);
+                AddElement(destination, false);
+                RelationshipView relationshipView = AddRelationship(relationship, description, _sequenceNumber.GetNext());
+                return relationshipView;
             }
             else
             {
-                throw new ArgumentException("Source and destination must not be null");
-            }
-        }
-
-        private void CheckElement(Element e)
-        {
-            // people can always be added
-            if (e is Person) {
-                return;
-            }
-
-            // if the scope of this dynamic is a software system, we only want:
-            // - containers inside that software system
-            // - other software systems
-            if (Element is SoftwareSystem) {
-                if (e.Equals(Element))
-                {
-                    throw new ArgumentException(e.Name + " is already the scope of this view and cannot be added to it.");
-                }
-                if (e is Container && !e.Parent.Equals(Element))
-                {
-                    throw new ArgumentException("Only containers that reside inside " + Element.Name + " can be added to this view.");
-                }
-                if (e is Component) {
-                    throw new ArgumentException("Components can't be added to a dynamic view when the scope is a software system.");
-                }
-            }
-
-            // if the scope of this dynamic view is a container, we only want other containers inside the same software system
-            // and other components inside the container
-            if (Element is Container) {
-                if (e.Equals(Element) || e.Equals(Element.Parent))
-                {
-                    throw new ArgumentException(e.Name + " is already the scope of this view and cannot be added to it.");
-                }
-                if (e is Container && !e.Parent.Equals(Element.Parent)) {
-                    throw new ArgumentException("Only containers that reside inside " + Element.Parent.Name + " can be added to this view.");
-                }
-
-                if (e is Component && !e.Parent.Equals(Element)) {
-                    throw new ArgumentException("Only components that reside inside " + Element.Name + " can be added to this view.");
-                }
+                throw new ArgumentException("Relationship does not exist in model");
             }
         }
 

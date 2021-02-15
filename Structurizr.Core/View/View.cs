@@ -132,19 +132,28 @@ namespace Structurizr
             _relationships = new HashSet<RelationshipView>();
         }
 
+        protected abstract void CheckElementCanBeAdded(Element element);
+
         protected void AddElement(Element element, bool addRelationships)
         {
-            if (element != null)
+            if (element == null)
             {
-                if (Model.Contains(element))
-                {
-                    _elements.Add(new ElementView(element));
+                throw new ArgumentException("An element must be specified.");
+            }
 
-                    if (addRelationships)
-                    {
-                        AddRelationships(element);
-                    }
+            if (Model.Contains(element))
+            {
+                CheckElementCanBeAdded(element);
+                _elements.Add(new ElementView(element));
+
+                if (addRelationships)
+                {
+                    AddRelationships(element);
                 }
+            }
+            else
+            {
+                throw new ArgumentException("The element named " + element.Name + " does not exist in the model associated with this view.");
             }
         }
 

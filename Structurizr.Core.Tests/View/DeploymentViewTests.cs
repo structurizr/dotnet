@@ -15,7 +15,7 @@ namespace Structurizr.Core.Tests
         public void Test_Name_WithNoSoftwareSystemAndNoEnvironment()
         {
             deploymentView = Views.CreateDeploymentView("deployment", "Description");
-            Assert.Equal("Deployment", deploymentView.Name);
+            Assert.Equal("Deployment - Default", deploymentView.Name);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Structurizr.Core.Tests
         {
             SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System", "");
             deploymentView = Views.CreateDeploymentView(softwareSystem, "deployment", "Description");
-            Assert.Equal("Software System - Deployment", deploymentView.Name);
+            Assert.Equal("Software System - Deployment - Default", deploymentView.Name);
         }
 
         [Fact]

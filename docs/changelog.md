@@ -7,6 +7,7 @@
 - Adds support for software system instances.
 - `Parent` of `SoftwareSystemInstance` and `ContainerInstance` now returns the parent deployment node.
 - Adds support for element groups.
+- Removes restrictions related to adding "external" containers/components to dynamic views.
 ## 0.9.7 (29th June 2020)
 
 - Added an ExternalSoftwareSystemBoundariesVisible property to ContainerView, to set whether software system boundaries should be visible for "external" containers (those outside the software system in scope).

@@ -37,6 +37,18 @@ namespace Structurizr
         {
             Model = model;
         }
+        
+        protected override void CheckElementCanBeAdded(Element element)
+        {
+            if (element is Person || element is SoftwareSystem)
+            {
+                // all good
+            }
+            else
+            {
+                throw new ElementNotPermittedInViewException("Only people and software systems can be added to a system landscape view.");
+            }
+        }
 
         /// <summary>
         /// Adds all software systems and all people to this view.

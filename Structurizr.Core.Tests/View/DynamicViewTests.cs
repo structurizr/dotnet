@@ -39,20 +39,35 @@ namespace Structurizr.Core.Tests
         }
 
         [Fact]
-        public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsASoftwareSystemButAContainerInAnotherSoftwareSystemIsAdded()
+        public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsNotSpecifiedButAContainerIsAdded()
         {
             try
             {
-                DynamicView dynamicView = Workspace.Views.CreateDynamicView(softwareSystemA, "key", "Description");
-                dynamicView.Add(containerB1, containerA1);
+                DynamicView dynamicView = Workspace.Views.CreateDynamicView("key", "Description");
+                dynamicView.Add(containerA1, containerA1);
                 throw new TestFailedException();
             }
-            catch (Exception e)
+            catch (ElementNotPermittedInViewException iae)
             {
-                Assert.Equal("Only containers that reside inside Software System A can be added to this view.", e.Message);
+                Assert.Equal("Only people and software systems can be added to this dynamic view.", iae.Message);
             }
         }
 
+        [Fact]
+        public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsNotSpecifiedButAComponentIsAdded()
+        {
+            try
+            {
+                DynamicView dynamicView = Workspace.Views.CreateDynamicView("key", "Description");
+                dynamicView.Add(componentA1, componentA1);
+                throw new TestFailedException();
+            }
+            catch (ElementNotPermittedInViewException iae)
+            {
+                Assert.Equal("Only people and software systems can be added to this dynamic view.", iae.Message);
+            }
+        }
+        
         [Fact]
         public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsASoftwareSystemButAComponentIsAdded()
         {
@@ -110,36 +125,6 @@ namespace Structurizr.Core.Tests
             catch (Exception e)
             {
                 Assert.Equal("Software System A is already the scope of this view and cannot be added to it.", e.Message);
-            }
-        }
-
-        [Fact]
-        public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsAContainerAndAContainerInAnotherSoftwareSystemIsAdded()
-        {
-            try
-            {
-                DynamicView dynamicView = Workspace.Views.CreateDynamicView(containerA1, "key", "Description");
-                dynamicView.Add(containerB1, containerA2);
-                throw new TestFailedException();
-            }
-            catch (Exception e)
-            {
-                Assert.Equal("Only containers that reside inside Software System A can be added to this view.", e.Message);
-            }
-        }
-
-        [Fact]
-        public void Test_Add_ThrowsAnException_WhenTheScopeOfTheDynamicViewIsAContainerAndAComponentInAnotherContainerIsAdded()
-        {
-            try
-            {
-                DynamicView dynamicView = Workspace.Views.CreateDynamicView(containerA1, "key", "Description");
-                dynamicView.Add(componentA2, containerA2);
-                throw new TestFailedException();
-            }
-            catch (Exception e)
-            {
-                Assert.Equal("Only components that reside inside Container A1 can be added to this view.", e.Message);
             }
         }
 

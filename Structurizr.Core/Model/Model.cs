@@ -631,9 +631,17 @@ namespace Structurizr
                 AddElementToInternalStructures(infrastructureNode);
             }
 
+            foreach (SoftwareSystemInstance softwareSystemInstance in deploymentNode.SoftwareSystemInstances)
+            {
+                softwareSystemInstance.SoftwareSystem = (SoftwareSystem)GetElement(softwareSystemInstance.SoftwareSystemId);
+                softwareSystemInstance.Parent = deploymentNode;
+                AddElementToInternalStructures(softwareSystemInstance);
+            }
+
             foreach (ContainerInstance containerInstance in deploymentNode.ContainerInstances)
             {
                 containerInstance.Container = (Container)GetElement(containerInstance.ContainerId);
+                containerInstance.Parent = deploymentNode;
                 AddElementToInternalStructures(containerInstance);
             }
         }

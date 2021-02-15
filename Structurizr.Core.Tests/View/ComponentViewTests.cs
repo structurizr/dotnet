@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Structurizr.Core.Tests
 {
@@ -146,11 +147,17 @@ namespace Structurizr.Core.Tests
         }
 
         [Fact]
-        public void Test_Add_DoesNothing_WhenANullContainerIsSpecified()
+        public void Test_Add_ThrowsAnException_WhenANullContainerIsSpecified()
         {
-            Assert.Equal(0, view.Elements.Count);
-            view.Add((Container)null);
-            Assert.Equal(0, view.Elements.Count);
+            try
+            {
+                view.Add((Container) null);
+                throw new TestFailedException();
+            }
+            catch (ArgumentException ae)
+            {
+                Assert.Equal("An element must be specified.", ae.Message);
+            }
         }
 
         [Fact]
@@ -243,13 +250,6 @@ namespace Structurizr.Core.Tests
         }
 
         [Fact]
-        public void Test_Add_DoesNothing_WhenTheContainerOfTheViewIsAdded()
-        {
-            view.Add(webApplication);
-            Assert.False(view.Elements.Contains(new ElementView(webApplication)));
-        }
-
-        [Fact]
         public void Test_Remove_DoesNothing_WhenANullComponentIsPassed()
         {
             Assert.Equal(0, view.Elements.Count);
@@ -312,8 +312,11 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_AddNearestNeighbours_DoesNothing_WhenThereAreNoNeighbours()
         {
-            view.AddNearestNeighbours(softwareSystem);
+            Component component = webApplication.AddComponent("Component");
+            view.Add(component);
+            Assert.Equal(1, view.Elements.Count);
 
+            view.AddNearestNeighbours(component);
             Assert.Equal(1, view.Elements.Count);
         }
 
@@ -350,31 +353,13 @@ namespace Structurizr.Core.Tests
             // userA -> systemA -> controller -> service -> systemB -> userB
             service.Uses(softwareSystemB, "");
 
-            view.AddNearestNeighbours(softwareSystem);
-
-            Assert.Equal(3, view.Elements.Count);
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystemA)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystem)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystemB)));
-
             view = new ComponentView(webApplication, "components", "Description");
             view.AddNearestNeighbours(softwareSystemA);
 
-            Assert.Equal(5, view.Elements.Count);
+            Assert.Equal(3, view.Elements.Count);
             Assert.True(view.Elements.Contains(new ElementView(userA)));
             Assert.True(view.Elements.Contains(new ElementView(softwareSystemA)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystem)));
-            Assert.True(view.Elements.Contains(new ElementView(webApplication)));
             Assert.True(view.Elements.Contains(new ElementView(controller)));
-
-            view = new ComponentView(webApplication, "components", "Description");
-            view.AddNearestNeighbours(webApplication);
-
-            Assert.Equal(4, view.Elements.Count);
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystemA)));
-            Assert.True(view.Elements.Contains(new ElementView(webApplication)));
-            Assert.True(view.Elements.Contains(new ElementView(database)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystemB)));
 
             view = new ComponentView(webApplication, "components", "Description");
             view.AddNearestNeighbours(controller);
@@ -426,6 +411,42 @@ namespace Structurizr.Core.Tests
             Assert.False(view.Elements.Contains(new ElementView(component2)));
         }
 
+        [Fact]
+        public void Test_AddSoftwareSystem_ThrowsAnException_WhenTheSoftwareSystemIsTheScopeOfTheView()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            Container container = softwareSystem.AddContainer("Container");
+
+            view = new ComponentView(container, "components", "Description");
+            try
+            {
+                view.Add(softwareSystem);
+                throw new TestFailedException();
+            }
+            catch (ElementNotPermittedInViewException e)
+            {
+                Assert.Equal("The software system in scope cannot be added to a component view.", e.Message);
+            }
+        }
+
+        [Fact]
+        public void Test_AddContainer_ThrowsAnException_WhenTheContainerIsTheScopeOfTheView() {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            Container container = softwareSystem.AddContainer("Container");
+
+            view = new ComponentView(container, "components", "Description");
+            try
+            {
+                view.Add(container);
+                throw new TestFailedException();
+            }
+            catch (ElementNotPermittedInViewException e)
+            {
+                Assert.Equal("The container in scope cannot be added to a component view.", e.Message);
+            }
+        }
+
+        
     }
 
 }

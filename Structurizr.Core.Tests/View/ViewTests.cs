@@ -1,9 +1,29 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Structurizr.Core.Tests.View
 {
     public class ViewTests : AbstractTestBase
     {
+        
+        [Fact]
+        public void Test_addElement_ThrowsAnException_WhenTheSpecifiedElementDoesNotExistInTheModel()
+        {
+            try
+            {
+                Workspace workspace = new Workspace("1", "");
+                SoftwareSystem softwareSystem = workspace.Model.AddSoftwareSystem("Software System");
+
+                SystemLandscapeView view = new Workspace("", "").Views.CreateSystemLandscapeView("key", "Description");
+                view.Add(softwareSystem);
+                throw new TestFailedException();
+            }
+            catch (ArgumentException ae)
+            {
+                Assert.Equal("The element named Software System does not exist in the model associated with this view.", ae.Message);
+            }
+        }
+
         [Fact]
         public void Test_EnableAutomaticLayout_EnablesAutoLayoutWithSomeDefaultValues()
         {

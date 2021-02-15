@@ -58,6 +58,45 @@ namespace Structurizr
             this.Container = container;
         }
 
+        protected override void CheckElementCanBeAdded(Element element)
+        {
+            if (element is Person)
+            {
+                return;
+            }
+
+            if (element is SoftwareSystem)
+            {
+                if (element.Equals(Container.Parent))
+                {
+                    throw new ElementNotPermittedInViewException("The software system in scope cannot be added to a component view.");
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (element is Container)
+            {
+                if (element.Equals(Container))
+                {
+                    throw new ElementNotPermittedInViewException("The container in scope cannot be added to a component view.");
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (element is Component)
+            {
+                return;
+            }
+
+            throw new ElementNotPermittedInViewException("Only people, software systems, containers, and components can be added to a component view.");
+        }
+
         public override void AddAllElements()
         {
             AddAllSoftwareSystems();
@@ -66,28 +105,24 @@ namespace Structurizr
             AddAllComponents();
         }
 
-        public override void Add(SoftwareSystem softwareSystem)
-        {
-            if (softwareSystem != null && !softwareSystem.Equals(SoftwareSystem))
-            {
-                AddElement(softwareSystem, true);
-            }
-        }
-
         public void AddAllContainers()
         {
             foreach (Container container in SoftwareSystem.Containers)
             {
-                Add(container);
+                try
+                {
+                    Add(container);
+                }
+                catch (ElementNotPermittedInViewException e)
+                {
+                    // ignore
+                }
             }
         }
 
         public void Add(Container container)
         {
-            if (container != null && !container.Equals(Container))
-            {
-                AddElement(container, true);
-            }
+            AddElement(container, true);
         }
 
         public void Remove(Container container)

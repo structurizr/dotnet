@@ -36,7 +36,14 @@ namespace Structurizr
         {
             foreach (SoftwareSystem softwareSystem in this.Model.SoftwareSystems)
             {
-                Add(softwareSystem);
+                try
+                {
+                    Add(softwareSystem);
+                }
+                catch (ElementNotPermittedInViewException e)
+                {
+                    // ignore
+                }
             }
         }
 
@@ -99,20 +106,41 @@ namespace Structurizr
                 return;
             }
 
-            AddElement(element, true);
-
-            ICollection<Relationship> relationships = Model.Relationships;
-            foreach (Relationship relationship in relationships)
+            try
             {
-                if (relationship.Source.Equals(element) && relationship.Destination.GetType() == typeOfElement)
-                {
-                    AddElement(relationship.Destination, true);
-                }
+                AddElement(element, true);
 
-                if (relationship.Destination.Equals(element) && relationship.Source.GetType() == typeOfElement)
+                ICollection<Relationship> relationships = Model.Relationships;
+                foreach (Relationship relationship in relationships)
                 {
-                    AddElement(relationship.Source, true);
+                    if (relationship.Source.Equals(element) && relationship.Destination.GetType() == typeOfElement)
+                    {
+                        try
+                        {
+                            AddElement(relationship.Destination, true);
+                        }
+                        catch (ElementNotPermittedInViewException e)
+                        {
+                            Console.WriteLine(e.Message + " (ignoring " + relationship.Destination.Name + ")");
+                        }
+                    }
+
+                    if (relationship.Destination.Equals(element) && relationship.Source.GetType() == typeOfElement)
+                    {
+                        try
+                        {
+                            AddElement(relationship.Source, true);
+                        }
+                        catch (ElementNotPermittedInViewException e)
+                        {
+                            Console.WriteLine(e.Message + " (ignoring " + relationship.Source.Name + ")");
+                        }
+                    }
                 }
+            }
+            catch (ElementNotPermittedInViewException e)
+            {
+                Console.WriteLine(e.Message + " (ignoring " + element.Name + ")");
             }
         }
         

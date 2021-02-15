@@ -32,6 +32,32 @@ namespace Structurizr
         {
         }
 
+        protected override void CheckElementCanBeAdded(Element element)
+        {
+            if (element is Person)
+            {
+                return;
+            }
+
+            if (element is SoftwareSystem)
+            {
+                if (element.Equals(SoftwareSystem))
+                {
+                    throw new ElementNotPermittedInViewException("The software system in scope cannot be added to a container view.");
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (element is Container)
+            {
+                return;
+            }
+
+            throw new ElementNotPermittedInViewException("Only people, software systems, and containers can be added to a container view.");
+        }
 
         /// <summary>
         /// Adds all software systems, people and containers to this view.
@@ -41,14 +67,6 @@ namespace Structurizr
             AddAllSoftwareSystems();
             AddAllPeople();
             AddAllContainers();
-        }
-
-        public override void Add(SoftwareSystem softwareSystem)
-        {
-            if (softwareSystem != null && !softwareSystem.Equals(SoftwareSystem))
-            {
-                AddElement(softwareSystem, true);
-            }
         }
 
         public void AddAllContainers()

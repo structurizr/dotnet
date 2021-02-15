@@ -64,13 +64,31 @@ namespace Structurizr
         }
 
         /// <summary>
-        /// Adds a container with the specified name, description and technology
-        /// (unless one exists with the same name already).
+        /// Adds a container with the specified name (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="name">the name of the container (e.g. "Web Application")</param>
+        public Container AddContainer(string name)
+        {
+            return AddContainer(name, "");
+        }
+
+        /// <summary>
+        /// Adds a container with the specified name and description (unless one exists with the same name already).
         /// </summary>
         /// <param name="name">the name of the container (e.g. "Web Application")</param>
         /// <param name="description">a short description/list of responsibilities</param>
-        /// <param name="technology">the technoogy choice (e.g. "Spring MVC", "Java EE", etc)</param>
-        public Container AddContainer(String name, String description, String technology)
+        public Container AddContainer(string name, string description)
+        {
+            return AddContainer(name, description, "");
+        }
+
+        /// <summary>
+        /// Adds a container with the specified name, description and technology (unless one exists with the same name already).
+        /// </summary>
+        /// <param name="name">the name of the container (e.g. "Web Application")</param>
+        /// <param name="description">a short description/list of responsibilities</param>
+        /// <param name="technology">the technology choice (e.g. "Spring MVC", "Java EE", etc)</param>
+        public Container AddContainer(string name, string description, string technology)
         {
             return Model.AddContainer(this, name, description, technology);
         }

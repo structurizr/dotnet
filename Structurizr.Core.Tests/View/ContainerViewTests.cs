@@ -132,7 +132,7 @@ namespace Structurizr.Core.Tests
         {
             view.AddNearestNeighbours(softwareSystem);
 
-            Assert.Equal(1, view.Elements.Count);
+            Assert.Equal(0, view.Elements.Count);
         }
 
         [Fact]
@@ -169,20 +169,20 @@ namespace Structurizr.Core.Tests
             // userA -> systemA -> controller -> service -> systemB -> userB
             service.Uses(softwareSystemB, "");
 
-            view.AddNearestNeighbours(softwareSystem);
+            view.AddNearestNeighbours(webApplication);
 
-            Assert.Equal(3, view.Elements.Count);
+            Assert.Equal(4, view.Elements.Count);
             Assert.True(view.Elements.Contains(new ElementView(softwareSystemA)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystem)));
             Assert.True(view.Elements.Contains(new ElementView(softwareSystemB)));
+            Assert.True(view.Elements.Contains(new ElementView(webApplication)));
+            Assert.True(view.Elements.Contains(new ElementView(database)));
 
             view = new ContainerView(softwareSystem, "containers", "Description");
             view.AddNearestNeighbours(softwareSystemA);
 
-            Assert.Equal(4, view.Elements.Count);
+            Assert.Equal(3, view.Elements.Count);
             Assert.True(view.Elements.Contains(new ElementView(userA)));
             Assert.True(view.Elements.Contains(new ElementView(softwareSystemA)));
-            Assert.True(view.Elements.Contains(new ElementView(softwareSystem)));
             Assert.True(view.Elements.Contains(new ElementView(webApplication)));
 
             view = new ContainerView(softwareSystem, "containers", "Description");
@@ -237,6 +237,20 @@ namespace Structurizr.Core.Tests
             Assert.False(view.Elements.Contains(new ElementView(container2)));
         }
 
+        [Fact]
+        public void Test_AddSoftwareSystem_ThrowsAnException_WhenTheSoftwareSystemIsTheScopeOfTheView() {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+
+            view = new ContainerView(softwareSystem, "containers", "Description");
+            try {
+                view.Add(softwareSystem);
+                throw new TestFailedException();
+            } catch (ElementNotPermittedInViewException e) {
+                Assert.Equal("The software system in scope cannot be added to a container view.", e.Message);
+            }
+        }
+
+        
     }
 
 }
