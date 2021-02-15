@@ -13,6 +13,8 @@ namespace Structurizr
     public sealed class Model
     {
 
+        public IImpliedRelationshipsStrategy ImpliedRelationshipsStrategy = new DefaultImpliedRelationshipsStrategy();
+
         [DataMember(Name = "enterprise", EmitDefaultValue = false)]
         public Enterprise Enterprise { get; set; }
 
@@ -382,7 +384,21 @@ namespace Structurizr
             }
 
             Relationship relationship = new Relationship(source, destination, description, technology, interactionStyle);
-            if (AddRelationship(relationship)) {
+            if (AddRelationship(relationship))
+            {
+
+                if (createImpliedRelationships)
+                {
+                    if
+                    (
+                        (source is Person || source is SoftwareSystem || source is Container || source is Component) &&
+                        (destination is Person || destination is SoftwareSystem || destination is Container || destination is Component)
+                        )
+                    {
+                        ImpliedRelationshipsStrategy.CreateImpliedRelationships(relationship);
+                    }
+                }
+
                 return relationship;
             }
             
