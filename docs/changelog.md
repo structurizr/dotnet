@@ -3,6 +3,7 @@
 ## 1.0.0 (unreleased)
 
 - Improved the support for creating [implied relationships](docs/implied-relationships.md).
+- Adds support for element groups.
 ## 0.9.7 (29th June 2020)
 
 - Added an ExternalSoftwareSystemBoundariesVisible property to ContainerView, to set whether software system boundaries should be visible for "external" containers (those outside the software system in scope).

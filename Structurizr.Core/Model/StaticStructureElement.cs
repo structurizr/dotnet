@@ -5,7 +5,7 @@
     /// This is the superclass for model elements that describe the static structure
     /// of a software system, namely Person, SoftwareSystem, Container and Component.
     /// </summary>
-    public abstract class StaticStructureElement : Element
+    public abstract class StaticStructureElement : GroupableElement
     {
 
         /// <summary>
