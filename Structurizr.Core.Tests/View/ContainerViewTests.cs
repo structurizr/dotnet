@@ -209,6 +209,34 @@ namespace Structurizr.Core.Tests
             Assert.True(view.Elements.Contains(new ElementView(database)));
         }
 
+        [Fact]
+        public void Test_AddDefaultElements()
+        {
+            Model.ImpliedRelationshipsStrategy = new CreateImpliedRelationshipsUnlessAnyRelationshipExistsStrategy();
+
+            Person user1 = Model.AddPerson("User 1");
+            Person user2 = Model.AddPerson("User 2");
+            SoftwareSystem softwareSystem1 = Model.AddSoftwareSystem("Software System 1");
+            Container container1 = softwareSystem1.AddContainer("Container 1", "", "");
+            SoftwareSystem softwareSystem2 = Model.AddSoftwareSystem("Software System 2");
+            Container container2 = softwareSystem2.AddContainer("Container 2", "", "");
+
+            user1.Uses(container1, "Uses");
+            user2.Uses(container2, "Uses");
+            container1.Uses(container2, "Uses");
+
+            view = new ContainerView(softwareSystem1, "containers", "Description");
+            view.AddDefaultElements();
+
+            Assert.Equal(3, view.Elements.Count);
+            Assert.True(view.Elements.Contains(new ElementView(user1)));
+            Assert.False(view.Elements.Contains(new ElementView(user2)));
+            Assert.False(view.Elements.Contains(new ElementView(softwareSystem1)));
+            Assert.True(view.Elements.Contains(new ElementView(softwareSystem2)));
+            Assert.True(view.Elements.Contains(new ElementView(container1)));
+            Assert.False(view.Elements.Contains(new ElementView(container2)));
+        }
+
     }
 
 }
