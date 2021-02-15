@@ -2,6 +2,7 @@
 
 ## 1.0.0 (unreleased)
 
+- Adds support for custom ID generators.
 - Improved the support for creating [implied relationships](docs/implied-relationships.md).
 - Adds support for software system instances.
 - `Parent` of `SoftwareSystemInstance` and `ContainerInstance` now returns the parent deployment node.

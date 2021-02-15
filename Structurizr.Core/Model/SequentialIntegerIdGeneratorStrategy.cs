@@ -1,20 +1,18 @@
-﻿namespace Structurizr
+﻿using System;
+
+namespace Structurizr
 {
-    internal class SequentialIntegerIdGeneratorStrategy
+    
+    /// <summary>
+    /// An ID generator that simply uses a sequential number when generating IDs for model elements and relationships.
+    /// This is the default ID generator.
+    /// </summary>
+    public class SequentialIntegerIdGeneratorStrategy : IdGenerator
     {
 
         private int Id = 0;
 
-        internal void Found(string id)
-        {
-            int idAsInt = int.Parse(id);
-            if (idAsInt > Id)
-            {
-                Id = idAsInt;
-            }
-        }
-
-        internal string GenerateId(Element element)
+        public string GenerateId(Element element)
         {
             lock(this)
             {
@@ -23,7 +21,7 @@
         }
 
         
-        internal string GenerateId(Relationship relationship)
+        public string GenerateId(Relationship relationship)
         {
             lock(this)
             {
@@ -31,5 +29,14 @@
             }
         }
 
+        public void Found(string id)
+        {
+            int idAsInt = int.Parse(id);
+            if (idAsInt > Id)
+            {
+                Id = idAsInt;
+            }
+        }
+        
     }
 }

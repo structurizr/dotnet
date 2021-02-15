@@ -77,7 +77,7 @@ namespace Structurizr
             }
         }
 
-        private readonly SequentialIntegerIdGeneratorStrategy _idGenerator = new SequentialIntegerIdGeneratorStrategy();
+        public IdGenerator IdGenerator = new SequentialIntegerIdGeneratorStrategy();
 
         internal Model()
         {
@@ -128,7 +128,7 @@ namespace Structurizr
 
                 _softwareSystems.Add(softwareSystem);
 
-                softwareSystem.Id = _idGenerator.GenerateId(softwareSystem);
+                softwareSystem.Id = IdGenerator.GenerateId(softwareSystem);
                 AddElementToInternalStructures(softwareSystem);
 
                 return softwareSystem;
@@ -181,7 +181,7 @@ namespace Structurizr
 
                 _people.Add(person);
 
-                person.Id = _idGenerator.GenerateId(person);
+                person.Id = IdGenerator.GenerateId(person);
                 AddElementToInternalStructures(person);
 
                 return person;
@@ -203,7 +203,7 @@ namespace Structurizr
                 container.Parent = parent;
                 parent.Add(container);
 
-                container.Id = _idGenerator.GenerateId(container);
+                container.Id = IdGenerator.GenerateId(container);
                 AddElementToInternalStructures(container);
 
                 return container;
@@ -304,7 +304,7 @@ namespace Structurizr
                 component.Parent = parent;
                 parent.Add(component);
 
-                component.Id = _idGenerator.GenerateId(component);
+                component.Id = IdGenerator.GenerateId(component);
                 AddElementToInternalStructures(component);
 
                 return component;
@@ -365,7 +365,7 @@ namespace Structurizr
                     _deploymentNodes.Add(deploymentNode);
                 }
 
-                deploymentNode.Id = _idGenerator.GenerateId(deploymentNode);
+                deploymentNode.Id = IdGenerator.GenerateId(deploymentNode);
                 AddElementToInternalStructures(deploymentNode);
 
                 return deploymentNode;
@@ -393,7 +393,7 @@ namespace Structurizr
                     infrastructureNode.Properties = properties;
                 }
 
-                infrastructureNode.Id = _idGenerator.GenerateId(infrastructureNode);
+                infrastructureNode.Id = IdGenerator.GenerateId(infrastructureNode);
                 AddElementToInternalStructures(infrastructureNode);
 
                 return infrastructureNode;
@@ -478,7 +478,7 @@ namespace Structurizr
         {
             if (!relationship.Source.Has(relationship))
             {
-                relationship.Id = _idGenerator.GenerateId(relationship);
+                relationship.Id = IdGenerator.GenerateId(relationship);
                 relationship.Source.AddRelationship(relationship);
 
                 AddRelationshipToInternalStructures(relationship);
@@ -491,7 +491,7 @@ namespace Structurizr
         private void AddRelationshipToInternalStructures(Relationship relationship)
         {
             _relationshipsById.Add(relationship.Id, relationship);
-            _idGenerator.Found(relationship.Id);
+            IdGenerator.Found(relationship.Id);
         }
 
         /// <summary>
@@ -570,7 +570,7 @@ namespace Structurizr
         {
             _elementsById.Add(element.Id, element);
             element.Model = this;
-            _idGenerator.Found(element.Id);
+            IdGenerator.Found(element.Id);
         }
 
         public bool Contains(Element element)

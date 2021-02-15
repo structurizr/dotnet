@@ -79,6 +79,11 @@ namespace Structurizr.Api
         /// <summary>the location where a copy of the workspace will be archived when it is retrieved from the server</summary>
         public DirectoryInfo WorkspaceArchiveLocation { get; set; }
 
+        /// <summary>
+        /// The ID generator to use when parsing a JSON workspace definition.
+        /// </summary>
+        public IdGenerator IdGenerator;
+        
         public EncryptionStrategy EncryptionStrategy { get; set; }
 
         public bool MergeFromRemote { get; set; }
@@ -210,7 +215,9 @@ namespace Structurizr.Api
 
                 if (EncryptionStrategy == null)
                 {
-                    return new JsonReader().Read(new StringReader(json));
+                    JsonReader jsonReader = new JsonReader();
+                    jsonReader.IdGenerator = IdGenerator;
+                    return jsonReader.Read(new StringReader(json));
                 }
                 else
                 {
@@ -223,7 +230,9 @@ namespace Structurizr.Api
                     else
                     {
                         // this workspace isn't encrypted, even though the client has an encryption strategy set
-                        return new JsonReader().Read(new StringReader(json));
+                        JsonReader jsonReader = new JsonReader();
+                        jsonReader.IdGenerator = IdGenerator;
+                        return jsonReader.Read(new StringReader(json));
                     }
                 }
             }

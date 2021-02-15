@@ -8,6 +8,8 @@ namespace Structurizr.IO.Json
     public class JsonReader
     {
 
+        public IdGenerator IdGenerator;
+
         public Workspace Read(StringReader reader)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings()
@@ -22,6 +24,11 @@ namespace Structurizr.IO.Json
             };
 
             Workspace workspace = JsonConvert.DeserializeObject<Workspace>(reader.ReadToEnd(), settings);
+            
+            if (IdGenerator != null) {
+                workspace.Model.IdGenerator = IdGenerator;
+            }
+
             workspace.Hydrate();
 
             return workspace;
