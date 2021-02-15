@@ -18,7 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{4ED0E8DB-8
 		docs\documentation-viewpoints-and-perspectives.md = docs\documentation-viewpoints-and-perspectives.md
 		docs\documentation.md = docs\documentation.md
 		docs\dynamic-diagram.md = docs\dynamic-diagram.md
-		docs\enterprise-context-diagram.md = docs\enterprise-context-diagram.md
 		docs\filtered-views.md = docs\filtered-views.md
 		docs\getting-started.md = docs\getting-started.md
 		docs\health-checks.md = docs\health-checks.md
@@ -27,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{4ED0E8DB-8
 		docs\styling-elements.md = docs\styling-elements.md
 		docs\styling-relationships.md = docs\styling-relationships.md
 		docs\system-context-diagram.md = docs\system-context-diagram.md
+		docs\system-landscape-diagram.md = docs\system-landscape-diagram.md
+		docs\implied-relationships.md = docs\implied-relationships.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structurizr.Core", "Structurizr.Core\Structurizr.Core.csproj", "{2F8E45CF-19B0-4B49-B7C7-5A3F25A993BD}"
