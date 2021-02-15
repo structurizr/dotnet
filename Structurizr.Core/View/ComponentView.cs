@@ -126,6 +126,28 @@ namespace Structurizr
             AddNearestNeighbours(element, typeof(Container));
             AddNearestNeighbours(element, typeof(Component));
         }
+        
+        /// <summary>
+        /// Adds the default set of elements to this view.
+        /// </summary>
+        public override void AddDefaultElements()
+        {
+            foreach (Component component in Container.Components)
+            {
+                Add(component);
 
+                foreach (Container container in SoftwareSystem.Containers)
+                {
+                    if (container.HasEfferentRelationshipWith(component) || component.HasEfferentRelationshipWith(container))
+                    {
+                        Add(container);
+                    }
+                };
+
+                AddNearestNeighbours(component, typeof(Person));
+                AddNearestNeighbours(component, typeof(SoftwareSystem));
+            }
+        }
+        
     }
 }

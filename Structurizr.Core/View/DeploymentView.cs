@@ -47,6 +47,14 @@ namespace Structurizr
         }
 
         /// <summary>
+        /// Adds the default set of elements to this view. 
+        /// </summary>
+        public void AddDefaultElements()
+        {
+            AddAllDeploymentNodes();
+        }
+
+        /// <summary>
         /// Adds all of the top-level deployment nodes to this view, for the same deployment environment (if set). 
         /// </summary>
         public void AddAllDeploymentNodes()

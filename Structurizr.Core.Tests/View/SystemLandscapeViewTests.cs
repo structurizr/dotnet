@@ -112,6 +112,21 @@ namespace Structurizr.Core.Tests
             Assert.True(view.Elements.Contains(new ElementView(person)));
         }
 
+        [Fact]
+        public void Test_AddDefaultElements()
+        {
+            Person user = Model.AddPerson("User");
+            SoftwareSystem softwareSystem1 = Model.AddSoftwareSystem("Software System 1");
+            SoftwareSystem softwareSystem2 = Model.AddSoftwareSystem("Software System 2");
+
+            view.AddDefaultElements();
+
+            Assert.Equal(3, view.Elements.Count);
+            Assert.True(view.Elements.Contains(new ElementView(user)));
+            Assert.True(view.Elements.Contains(new ElementView(softwareSystem1)));
+            Assert.True(view.Elements.Contains(new ElementView(softwareSystem2)));
+        }
+
     }
 
 }

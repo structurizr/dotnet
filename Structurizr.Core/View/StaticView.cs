@@ -85,6 +85,11 @@ namespace Structurizr
             RemoveElement(person);
         }
 
+        /// <summary>
+        /// Adds the default set of elements to this view. 
+        /// </summary>
+        public abstract void AddDefaultElements();
+
         public abstract void AddNearestNeighbours(Element element);
 
         protected void AddNearestNeighbours(Element element, Type typeOfElement)
