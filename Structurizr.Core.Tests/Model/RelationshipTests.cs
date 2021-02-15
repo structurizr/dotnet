@@ -27,7 +27,7 @@ namespace Structurizr.Core.Tests
         public void Test_Tags_WhenThereAreNoTags()
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "uses");
-            Assert.Equal("Relationship,Synchronous", relationship.Tags);
+            Assert.Equal("Relationship", relationship.Tags);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Structurizr.Core.Tests
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "uses");
             relationship.AddTags("tag1", "tag2", "tag3");
-            Assert.Equal("Relationship,Synchronous,tag1,tag2,tag3", relationship.Tags);
+            Assert.Equal("Relationship,tag1,tag2,tag3", relationship.Tags);
         }
 
         [Fact]
@@ -51,10 +51,10 @@ namespace Structurizr.Core.Tests
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "uses");
             relationship.AddTags((string)null);
-            Assert.Equal("Relationship,Synchronous", relationship.Tags);
+            Assert.Equal("Relationship", relationship.Tags);
 
             relationship.AddTags(null, null, null);
-            Assert.Equal("Relationship,Synchronous", relationship.Tags);
+            Assert.Equal("Relationship", relationship.Tags);
         }
 
         [Fact]
@@ -62,24 +62,28 @@ namespace Structurizr.Core.Tests
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "uses");
             relationship.AddTags(null, "tag1", null, "tag2");
-            Assert.Equal("Relationship,Synchronous,tag1,tag2", relationship.Tags);
+            Assert.Equal("Relationship,tag1,tag2", relationship.Tags);
         }
 
         [Fact]
-        public void Test_InteractionStyle_ReturnsSynchronous_WhenNotExplicitlySet()
+        public void Test_InteractionStyle_ReturnsNull_WhenNotExplicitlySet()
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "uses");
-            Assert.Equal(InteractionStyle.Synchronous, relationship.InteractionStyle);
+            Assert.Null(relationship.InteractionStyle);
         }
 
         [Fact]
         public void test_Tags_IncludesTheInteractionStyleWhenSpecified()
         {
             Relationship relationship = _softwareSystem1.Uses(_softwareSystem2, "Uses 1", "Technology");
+            Assert.False(relationship.Tags.Contains(Tags.Synchronous));
+            Assert.False(relationship.Tags.Contains(Tags.Asynchronous));
+            
+            relationship = _softwareSystem1.Uses(_softwareSystem2, "Uses 2", "Technology", InteractionStyle.Synchronous);
             Assert.True(relationship.Tags.Contains(Tags.Synchronous));
             Assert.False(relationship.Tags.Contains(Tags.Asynchronous));
-
-            relationship = _softwareSystem1.Uses(_softwareSystem2, "Uses 2", "Technology", InteractionStyle.Asynchronous);
+            
+            relationship = _softwareSystem1.Uses(_softwareSystem2, "Uses 3", "Technology", InteractionStyle.Asynchronous);
             Assert.False(relationship.Tags.Contains(Tags.Synchronous));
             Assert.True(relationship.Tags.Contains(Tags.Asynchronous));
         }

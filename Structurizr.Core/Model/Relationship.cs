@@ -90,7 +90,7 @@ namespace Structurizr
         [DataMember(Name = "technology", EmitDefaultValue = false)]
         public string Technology { get; internal set; }
 
-        private InteractionStyle _interactionStyle = InteractionStyle.Synchronous;
+        private InteractionStyle? _interactionStyle;
 
         [DataMember(Name = "linkedRelationshipId", EmitDefaultValue = false)]
         public string LinkedRelationshipId { get; internal set; }
@@ -99,7 +99,7 @@ namespace Structurizr
         /// The interaction style (synchronous or asynchronous).
         /// </summary>
         [DataMember(Name = "interactionStyle", EmitDefaultValue = false)]
-        public InteractionStyle InteractionStyle
+        public InteractionStyle? InteractionStyle
         {
             get
             {
@@ -144,41 +144,33 @@ namespace Structurizr
         {
         }
 
-        internal Relationship(Element source, Element destination, string description) :
-            this(source, destination, description, null)
-        {
-        }
-
-        internal Relationship(Element source, Element destination, string description, string technology) :
-            this(source, destination, description, technology, InteractionStyle.Synchronous)
-        {
-        }
-
-        internal Relationship(Element source, Element destination, string description, string technology, InteractionStyle interactionStyle) :
+        internal Relationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle, string[] tags) :
             this()
         {
-            this.Source = source;
-            this.Destination = destination;
-            this.Description = description;
-            this.Technology = technology;
-            this.InteractionStyle = interactionStyle;
-            
-            if (interactionStyle == InteractionStyle.Synchronous)
-            {
-                AddTags(Structurizr.Tags.Synchronous);
-            }
-            else
-            {
-                AddTags(Structurizr.Tags.Asynchronous);
-            }
+            Source = source;
+            Destination = destination;
+            Description = description;
+            Technology = technology;
+            InteractionStyle = interactionStyle;
+
+            AddTags(tags);
         }
 
         public override List<string> GetRequiredTags()
         {
             if (LinkedRelationshipId == null) {
-                string[] tags = {
-                    Structurizr.Tags.Relationship
-                };
+                List<string> tags = new List<string>(); 
+                tags.Add(Structurizr.Tags.Relationship);
+                
+                if (InteractionStyle == Structurizr.InteractionStyle.Synchronous)
+                {
+                    tags.Add(Structurizr.Tags.Synchronous);
+                }
+                else if (InteractionStyle == Structurizr.InteractionStyle.Asynchronous)
+                {
+                    tags.Add(Structurizr.Tags.Asynchronous);
+                }
+                
                 return tags.ToList();
             } else {
                 return new List<string>();
