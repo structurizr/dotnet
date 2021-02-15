@@ -50,7 +50,7 @@ The view can then be exported to be visualised using the [Structurizr service](h
     * [Component diagram](docs/component-diagram.md)
     * [Dynamic diagram](docs/dynamic-diagram.md)
     * [Deployment diagram](docs/deployment-diagram.md)
-    * [Enterprise Context diagram](docs/enterprise-context-diagram.md)
+    * [System Landscape diagram](docs/system-landscape-diagram.md)
     * [Styling elements](docs/styling-elements.md)
     * [Styling relationships](docs/styling-relationships.md)
     * [Filtered views](docs/filtered-views.md)
