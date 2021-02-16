@@ -20,14 +20,13 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_CanonicalName_WhenTheDeploymentNodeHasAParent()
         {
-            DeploymentNode parent = new DeploymentNode();
-            parent.Name = "Ubuntu Server";
+            DeploymentNode l1 = Model.AddDeploymentNode("Level 1", "", "");
+            DeploymentNode l2 = l1.AddDeploymentNode("Level 2", "", "");
+            DeploymentNode l3 = l2.AddDeploymentNode("Level 3", "", "");
 
-            DeploymentNode child = new DeploymentNode();
-            child.Name = "Apache Tomcat";
-            child.Parent = parent;
-
-            Assert.Equal("DeploymentNode://Default/Ubuntu Server/Apache Tomcat", child.CanonicalName);
+            Assert.Equal("DeploymentNode://Default/Level 1", l1.CanonicalName);
+            Assert.Equal("DeploymentNode://Default/Level 1/Level 2", l2.CanonicalName);
+            Assert.Equal("DeploymentNode://Default/Level 1/Level 2/Level 3", l3.CanonicalName);
         }
 
         [Fact]

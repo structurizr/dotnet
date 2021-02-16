@@ -59,14 +59,15 @@ namespace Structurizr
             buf.Append(formatName(deploymentNode.Environment));
             buf.Append(DeploymentCanonicalNameSeperator);
 
+            string parents = "";
             DeploymentNode parent = (DeploymentNode)deploymentNode.Parent;
             while (parent != null)
             {
-                buf.Append(formatName(parent));
-                buf.Append(DeploymentCanonicalNameSeperator);
+                parents = formatName(parent) + DeploymentCanonicalNameSeperator + parents;
                 parent = (DeploymentNode)parent.Parent;
             }
 
+            buf.Append(parents);
             buf.Append(formatName(deploymentNode));
 
             return buf.ToString();
