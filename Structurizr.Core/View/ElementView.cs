@@ -8,7 +8,7 @@ namespace Structurizr
     /// An instance of a model element (Person, Software System, Container or Component) in a View.
     /// </summary>
     [DataContract]
-    public sealed class ElementView : ModelItemView, IEquatable<ElementView>
+    public sealed class ElementView : IEquatable<ElementView>
     {
 
         public Element Element { get; set; }

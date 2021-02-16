@@ -11,7 +11,7 @@ namespace Structurizr
     /// An instance of a model relationship in a View.
     /// </summary>
     [DataContract]
-    public sealed class RelationshipView : ModelItemView, IEquatable<RelationshipView>
+    public sealed class RelationshipView : IEquatable<RelationshipView>
     {
 
         public Relationship Relationship { get; set; }
