@@ -2,9 +2,7 @@
 
 # Structurizr for .NET
 
-This GitHub repository is an official client library for the [Structurizr](https://structurizr.com) cloud service and on-premises installation, both of which are web-based publishing platforms for software architecture models based upon the [C4 model](https://c4model.com). __This repository is supported by Structurizr Limited__, as a part of the Structurizr service.
-
-The component finder, adr-tools importer, and alternative diagram export formats (e.g. PlantUML) can be found at [Structurizr for .NET extensions](https://github.com/structurizr/dotnet-extensions).
+This GitHub repository is an official client library for the [Structurizr](https://structurizr.com) cloud service and on-premises installation, both of which are web-based publishing platforms for software architecture models based upon the [C4 model](https://c4model.com). The component finder, adr-tools importer, and alternative diagram export formats (e.g. PlantUML) can be found at [Structurizr for .NET extensions](https://github.com/structurizr/dotnet-extensions).
 
 ## A quick example
 
@@ -39,12 +37,17 @@ The view can then be exported to be visualised using the [Structurizr service](h
 * Introduction
     * [Getting started](docs/getting-started.md)
     * [About Structurizr and how it compares to other tooling](https://structurizr.com/help/about)
+    * [Why use code?](https://structurizr.com/help/code)
     * [Basic concepts](https://structurizr.com/help/concepts) (workspaces, models, views and documentation)
     * [C4 model](https://structurizr.com/help/c4)
     * [Binaries](docs/binaries.md)
     * [API Client](docs/api-client.md)
     * [Usage patterns](docs/usage-patterns.md)
-* Diagrams
+    * [FAQ](docs/faq.md)
+ * Model
+	* [Creating your model](docs/model.md)
+	* [Implied relationships](docs/implied-relationships.md)
+* Views
     * [System Context diagram](docs/system-context-diagram.md)
     * [Container diagram](docs/container-diagram.md)
     * [Component diagram](docs/component-diagram.md)
