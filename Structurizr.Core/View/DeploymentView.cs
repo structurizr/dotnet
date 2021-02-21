@@ -203,6 +203,11 @@ namespace Structurizr
         /// <param name="deploymentNode">the DeploymentNode to remove</param>
         public void Remove(DeploymentNode deploymentNode)
         {
+            foreach (SoftwareSystemInstance softwareSystemInstance in deploymentNode.SoftwareSystemInstances)
+            {
+                Remove(softwareSystemInstance);
+            }
+
             foreach (ContainerInstance containerInstance in deploymentNode.ContainerInstances)
             {
                 Remove(containerInstance);
@@ -232,7 +237,16 @@ namespace Structurizr
         }
 
         /// <summary>
-        /// Removes an container instance from this view.
+        /// Removes a software system instance from this view.
+        /// </summary>
+        /// <param name="softwareSystemInstance">the SoftwareSystemInstance to remove</param>
+        public void Remove(SoftwareSystemInstance softwareSystemInstance)
+        {
+            RemoveElement(softwareSystemInstance);
+        }
+
+        /// <summary>
+        /// Removes a container instance from this view.
         /// </summary>
         /// <param name="containerInstance">the ContainerInstance to remove</param>
         public void Remove(ContainerInstance containerInstance)
@@ -243,19 +257,19 @@ namespace Structurizr
         /// <summary>
         /// Adds an animation step, with the specified container instances and infrastructure nodes.
         /// </summary>
-        /// <param name="containerInstances">the container instances that should be shown in the animation step</param>
+        /// <param name="elementInstances">the software system/container instances that should be shown in the animation step</param>
         /// <param name="infrastructureNodes">the infrastructure nodes that should be shown in the animation step</param>
-        public void AddAnimation(ContainerInstance[] containerInstances, InfrastructureNode[] infrastructureNodes)
+        public void AddAnimation(StaticStructureElementInstance[] elementInstances, InfrastructureNode[] infrastructureNodes)
         {
-            if ((containerInstances == null || containerInstances.Length == 0) && (infrastructureNodes == null || infrastructureNodes.Length == 0))
+            if ((elementInstances == null || elementInstances.Length == 0) && (infrastructureNodes == null || infrastructureNodes.Length == 0))
             {
-                throw new ArgumentException("One or more container instances/infrastructure nodes must be specified.");
+                throw new ArgumentException("One or more software system/container instances and/or infrastructure nodes must be specified.");
             }
 
             List<Element> elements = new List<Element>();
-            if (containerInstances != null)
+            if (elementInstances != null)
             {
-                elements.AddRange(containerInstances);
+                elements.AddRange(elementInstances);
             }
             if (infrastructureNodes != null)
             {
@@ -282,15 +296,15 @@ namespace Structurizr
         /// <summary>
         /// Adds an animation step, with the specified container instances.
         /// </summary>
-        /// <param name="containerInstances">the container instances that should be shown in the animation step</param>
-        public void AddAnimation(params ContainerInstance[] containerInstances)
+        /// <param name="elementInstances">the software system/container instances that should be shown in the animation step</param>
+        public void AddAnimation(params StaticStructureElementInstance[] elementInstances)
         {
-            if (containerInstances == null || containerInstances.Length == 0)
+            if (elementInstances == null || elementInstances.Length == 0)
             {
-                throw new ArgumentException("One or more container instances must be specified.");
+                throw new ArgumentException("One or more software system/container instances must be specified.");
             }
 
-            AddAnimation(containerInstances, new InfrastructureNode[0]);
+            AddAnimation(elementInstances, new InfrastructureNode[0]);
         }
 
         private void addAnimationStep(params Element[] elements)

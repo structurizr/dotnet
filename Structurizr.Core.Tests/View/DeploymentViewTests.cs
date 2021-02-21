@@ -190,7 +190,7 @@ namespace Structurizr.Core.Tests
             }
             catch (ArgumentException ae)
             {
-                Assert.Equal("One or more container instances must be specified.", ae.Message);
+                Assert.Equal("One or more software system/container instances must be specified.", ae.Message);
             }
         }
 
@@ -220,7 +220,7 @@ namespace Structurizr.Core.Tests
             }
             catch (ArgumentException ae)
             {
-                Assert.Equal("One or more container instances/infrastructure nodes must be specified.", ae.Message);
+                Assert.Equal("One or more software system/container instances and/or infrastructure nodes must be specified.", ae.Message);
             }
         }
 
