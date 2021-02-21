@@ -70,27 +70,29 @@ namespace Structurizr
                 }
             }
 
-            /*
-            if (elementToBeAdded is SoftwareSystemInstance) {
+            if (elementToBeAdded is SoftwareSystemInstance)
+            {
                 // check that a child container instance hasn't been added already
                 SoftwareSystemInstance softwareSystemInstanceToBeAdded = (SoftwareSystemInstance) elementToBeAdded;
-                ISet<string> softwareSystemIds = Elements.stream().map(ElementView::getElement).filter(e -> e instanceof ContainerInstance).map(e -> (ContainerInstance)e).map(ci -> ci.getContainer().getSoftwareSystem().getId()).collect(Collectors.toSet());
+                IList<string> softwareSystemIds = Elements.Select(ev => ev.Element).OfType<ContainerInstance>().Select(ci => ci.Container.SoftwareSystem.Id).ToList();
 
-                if (softwareSystemIds.Contains(softwareSystemInstanceToBeAdded.SoftwareSystemId)) {
+                if (softwareSystemIds.Contains(softwareSystemInstanceToBeAdded.SoftwareSystemId))
+                {
                     throw new ElementNotPermittedInViewException("A child of " + elementToBeAdded.Name + " is already in this view.");
                 }
             }
 
-            if (elementToBeAdded is ContainerInstance) {
+            if (elementToBeAdded is ContainerInstance)
+            {
                 // check that the parent software system instance hasn't been added already
                 ContainerInstance containerInstanceToBeAdded = (ContainerInstance)elementToBeAdded;
-                ISet<String> softwareSystemIds = Elements.stream().map(ElementView::getElement).filter(e -> e instanceof SoftwareSystemInstance).map(e -> (SoftwareSystemInstance)e).map(SoftwareSystemInstance::getSoftwareSystemId).collect(Collectors.toSet());
+                IList<String> softwareSystemIds = Elements.Select(ev => ev.Element).OfType<SoftwareSystemInstance>().Select(ssi => ssi.SoftwareSystemId).ToList();
 
-                if (softwareSystemIds.Contains(containerInstanceToBeAdded.Container.SoftwareSystem.Id)) {
+                if (softwareSystemIds.Contains(containerInstanceToBeAdded.Container.SoftwareSystem.Id))
+                {
                     throw new ElementNotPermittedInViewException("The parent of " + elementToBeAdded.Name + " is already in this view.");
                 }
             }
-            */
         }
 
         /// <summary>
@@ -146,6 +148,50 @@ namespace Structurizr
                     AddElement(parent, addRelationships);
                     parent = parent.Parent;
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Adds an infrastructure node (and its parent deployment nodes) to this view.
+        /// </summary>
+        /// <param name="infrastructureNode">the InfrastructureNode to add</param>
+        public void Add(InfrastructureNode infrastructureNode) {
+            AddElement(infrastructureNode, true);
+            DeploymentNode parent = (DeploymentNode)infrastructureNode.Parent;
+            while (parent != null)
+            {
+                AddElement(parent, true);
+                parent = (DeploymentNode)parent.Parent;
+            }
+        }
+
+        /// <summary>
+        /// Adds a software system instance (and its parent deployment nodes) to this view.
+        /// </summary>
+        /// <param name="softwareSystemInstance">the SoftwareSystemInstance to add</param>
+        public void Add(SoftwareSystemInstance softwareSystemInstance)
+        {
+            AddElement(softwareSystemInstance, true);
+            DeploymentNode parent = (DeploymentNode)softwareSystemInstance.Parent;
+            while (parent != null)
+            {
+                AddElement(parent, true);
+                parent = (DeploymentNode)parent.Parent;
+            }
+        }
+
+        /// <summary>
+        /// Adds a container instance (and its parent deployment nodes) to this view.
+        /// </summary>
+        /// <param name="containerInstance">the ContainerInstance to add</param>
+        public void Add(ContainerInstance containerInstance)
+        {
+            AddElement(containerInstance, true);
+            DeploymentNode parent = (DeploymentNode)containerInstance.Parent;
+            while (parent != null)
+            {
+                AddElement(parent, true);
+                parent = (DeploymentNode)parent.Parent;
             }
         }
 

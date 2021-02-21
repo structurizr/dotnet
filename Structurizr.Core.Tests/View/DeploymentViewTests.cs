@@ -312,6 +312,108 @@ namespace Structurizr.Core.Tests
                 Assert.Equal("None of the specified container instances exist in this view.", ae.Message);
             }
         }
+        
+        [Fact]
+        public void Test_Add_AddsTheInfrastructureNode()
+        {
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            InfrastructureNode infrastructureNode1 = deploymentNodeChild.AddInfrastructureNode("Infrastructure Node 1");
+            InfrastructureNode infrastructureNode2 = deploymentNodeChild.AddInfrastructureNode("Infrastructure Node 2");
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.Add(infrastructureNode1);
+
+            Assert.Equal(3, deploymentView.Elements.Count);
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeParent)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeChild)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(infrastructureNode1)));
+        }
+
+        [Fact]
+        public void Test_Add_AddsTheSoftwareSystemInstance()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            InfrastructureNode infrastructureNode = deploymentNodeChild.AddInfrastructureNode("Infrastructure Node ");
+            SoftwareSystemInstance softwareSystemInstance = deploymentNodeChild.Add(softwareSystem);
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.Add(softwareSystemInstance);
+
+            Assert.Equal(3, deploymentView.Elements.Count);
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeParent)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeChild)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(softwareSystemInstance)));
+        }
+        
+        [Fact]
+        public void Test_AddSoftwareSystemInstance_ThrowsAnException_WhenAChildContainerInstanceHasAlreadyBeenAdded()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            Container container = softwareSystem.AddContainer("Container");
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            SoftwareSystemInstance softwareSystemInstance = deploymentNodeChild.Add(softwareSystem);
+            ContainerInstance containerInstance = deploymentNodeChild.Add(container);
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.Add(containerInstance);
+
+            try 
+            {
+                deploymentView.Add(softwareSystemInstance);
+                throw new TestFailedException();
+            }
+            catch (ElementNotPermittedInViewException e)
+            {
+                Assert.Equal("A child of Software System is already in this view.", e.Message);
+            }
+        }
+
+        [Fact]
+        public void Test_Add_AddsTheContainerInstance()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            Container container = softwareSystem.AddContainer("Container");
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            InfrastructureNode infrastructureNode = deploymentNodeChild.AddInfrastructureNode("Infrastructure Node ");
+            ContainerInstance containerInstance = deploymentNodeChild.Add(container);
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.Add(containerInstance);
+
+            Assert.Equal(3, deploymentView.Elements.Count);
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeParent)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeChild)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(containerInstance)));
+        }
+
+        [Fact]
+        public void Test_AddContainerInstance_ThrowsAnException_WhenTheParentSoftwareSystemInstanceHasAlreadyBeenAdded()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System");
+            Container container = softwareSystem.AddContainer("Container");
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            SoftwareSystemInstance softwareSystemInstance = deploymentNodeChild.Add(softwareSystem);
+            ContainerInstance containerInstance = deploymentNodeChild.Add(container);
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.Add(softwareSystemInstance);
+
+            try 
+            {
+                deploymentView.Add(containerInstance);
+                throw new TestFailedException();
+            }
+            catch (ElementNotPermittedInViewException e)
+            {
+                Assert.Equal("The parent of Container is already in this view.", e.Message);
+            }
+        }
 
         [Fact]
         public void Test_Remove_RemovesTheInfrastructureNode()
@@ -349,6 +451,26 @@ namespace Structurizr.Core.Tests
             Assert.Equal(4, deploymentView.Elements.Count);
 
             deploymentView.Remove(containerInstance);
+            Assert.Equal(3, deploymentView.Elements.Count);
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeParent)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeChild)));
+            Assert.True(deploymentView.Elements.Contains(new ElementView(infrastructureNode)));
+        }
+
+        [Fact]
+        public void Test_Remove_RemovesTheSoftwareSystemInstance()
+        {
+            SoftwareSystem softwareSystem = Model.AddSoftwareSystem("Software System", "");
+            DeploymentNode deploymentNodeParent = Model.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            DeploymentNode deploymentNodeChild = deploymentNodeParent.AddDeploymentNode("Deployment Node", "Description", "Technology");
+            InfrastructureNode infrastructureNode = deploymentNodeChild.AddInfrastructureNode("Infrastructure Node");
+            SoftwareSystemInstance softwareSystemInstance = deploymentNodeChild.Add(softwareSystem);
+
+            deploymentView = Views.CreateDeploymentView("deployment", "Description");
+            deploymentView.AddAllDeploymentNodes();
+            Assert.Equal(4, deploymentView.Elements.Count);
+
+            deploymentView.Remove(softwareSystemInstance);
             Assert.Equal(3, deploymentView.Elements.Count);
             Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeParent)));
             Assert.True(deploymentView.Elements.Contains(new ElementView(deploymentNodeChild)));
