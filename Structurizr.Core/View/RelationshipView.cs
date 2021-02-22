@@ -54,11 +54,24 @@ namespace Structurizr
         [DataMember(Name = "description", EmitDefaultValue = false)]
         public string Description { get; set; }
 
+        private List<Vertex> _vertices = new List<Vertex>();
+
         /// <summary>
         /// The set of vertices used to render the relationship.
         /// </summary>
         [DataMember(Name = "vertices", EmitDefaultValue = false)]
-        public List<Vertex> Vertices { get; set; }
+        public List<Vertex> Vertices
+        {
+            get
+            {
+                return new List<Vertex>(_vertices);
+            }
+
+            internal set
+            {
+                _vertices = new List<Vertex>(value);
+            }
+        }
 
         /// <summary>
         /// The routing of the line.
@@ -97,10 +110,12 @@ namespace Structurizr
 
         internal RelationshipView()
         {
+            Vertices = new List<Vertex>();
         }
 
         internal RelationshipView(Relationship relationship)
         {
+            Vertices = new List<Vertex>();
             this.Relationship = relationship;
         }
 

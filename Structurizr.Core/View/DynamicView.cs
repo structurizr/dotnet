@@ -243,23 +243,6 @@ namespace Structurizr
             return base.Add(relationship);
         }
 
-        internal override RelationshipView FindRelationshipView(RelationshipView sourceRelationshipView)
-        {
-            foreach (RelationshipView relationshipView in Relationships)
-            {
-                if (relationshipView.Relationship.Equals(sourceRelationshipView.Relationship))
-                {
-                    if ((relationshipView.Description != null && relationshipView.Description.Equals(sourceRelationshipView.Description)) &&
-                            relationshipView.Order.Equals(sourceRelationshipView.Order))
-                    {
-                        return relationshipView;
-                    }
-                }
-            }
-
-            return null;
-        }
-
         public void StartParallelSequence()
         {
             _sequenceNumber.StartParallelSequence();

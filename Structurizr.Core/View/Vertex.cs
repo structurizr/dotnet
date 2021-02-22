@@ -14,6 +14,12 @@ namespace Structurizr
         {
         }
 
+        internal Vertex(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
         /// <summary>
         /// The horizontal position of the vertex when rendered.
         /// </summary>
@@ -28,4 +34,5 @@ namespace Structurizr
         public int? Y { get; set; }
   
     }
+    
 }

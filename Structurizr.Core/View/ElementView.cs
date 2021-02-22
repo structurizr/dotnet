@@ -40,14 +40,14 @@ namespace Structurizr
         /// <summary>
         /// The horizontal position of the element when rendered.
         /// </summary>
-        [DataMember(Name="x", EmitDefaultValue=false)]
-        public int? X { get; set; }
+        [DataMember(Name="x", EmitDefaultValue=true)]
+        public int X { get; set; }
   
         /// <summary>
         /// The vertical position of the element when rendered.
         /// </summary>
-        [DataMember(Name="y", EmitDefaultValue=false)]
-        public int? Y { get; set; }
+        [DataMember(Name="y", EmitDefaultValue=true)]
+        public int Y { get; set; }
   
         internal ElementView()
         {

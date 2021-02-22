@@ -10,6 +10,8 @@ namespace Structurizr
     public abstract class View
     {
 
+        public LayoutMergeStrategy LayoutMergeStrategy = new DefaultLayoutMergeStrategy();
+        
         /// <summary>
         /// An identifier for this view.
         /// </summary>
@@ -205,6 +207,27 @@ namespace Structurizr
             return _elements.Count(ev => ev.Element.Equals(element)) > 0;
         }
 
+        /// <summary>
+        /// Gets the element view for the given element.
+        /// </summary>
+        /// <param name="element">the Element to find the ElementView for</param>
+        /// <returns>an ElementView object, or null if the element doesn't exist in the view</returns>
+        public ElementView GetElementView(Element element)
+        {
+            return Elements.First(ev => ev.Id.Equals(element.Id));
+        }
+
+        /// <summary>
+        /// Gets the relationship view for the given relationship.
+        /// </summary>
+        /// <param name="relationship">the Relationship to find the RelationshipView for</param>
+        /// <returns>a RelationshipView object, or null if the relationship doesn't exist in the view</returns>
+        public RelationshipView GetRelationshipView(Relationship relationship)
+        {
+            return Relationships.First(ev => ev.Id.Equals(relationship.Id));
+        }
+
+
         private void AddRelationships(Element element)
         {
             List<Element> elements = new List<Element>();
@@ -244,56 +267,14 @@ namespace Structurizr
             }
         }
 
+        /// <summary>
+        /// Attempts to copy the visual layout information (e.g. x,y coordinates) of elements and relationships
+        /// from the specified source view into this view.
+        /// </summary>
+        /// <param name="source">the source view</param>
         public void CopyLayoutInformationFrom(View source)
         {
-            if (PaperSize == null)
-            {
-                PaperSize = source.PaperSize;
-            }
-
-            foreach (ElementView sourceElementView in source.Elements)
-            {
-                ElementView destinationElementView = FindElementView(sourceElementView);
-                if (destinationElementView != null)
-                {
-                    destinationElementView.CopyLayoutInformationFrom(sourceElementView);
-                }
-            }
-
-            foreach (RelationshipView sourceRelationshipView in source.Relationships)
-            {
-                RelationshipView destinationRelationshipView = FindRelationshipView(sourceRelationshipView);
-                if (destinationRelationshipView != null)
-                {
-                    destinationRelationshipView.CopyLayoutInformationFrom(sourceRelationshipView);
-                }
-            }
-        }
-
-        private ElementView FindElementView(ElementView sourceElementView)
-        {
-            foreach (ElementView elementView in Elements)
-            {
-                if (elementView.Element.Equals(sourceElementView.Element))
-                {
-                    return elementView;
-                }
-            }
-
-            return null;
-        }
-
-        internal virtual RelationshipView FindRelationshipView(RelationshipView sourceRelationshipView)
-        {
-            foreach (RelationshipView relationshipView in Relationships)
-            {
-                if (relationshipView.Relationship.Equals(sourceRelationshipView.Relationship))
-                {
-                    return relationshipView;
-                }
-            }
-
-            return null;
+            LayoutMergeStrategy.CopyLayoutInformation(source, this);
         }
 
         [DataMember(Name = "automaticLayout", EmitDefaultValue = false)]
@@ -327,6 +308,6 @@ namespace Structurizr
         {
             AutomaticLayout = null;
         }
-        
+
     }
 }
