@@ -108,6 +108,13 @@ namespace Structurizr
             }
         }
 
+        /// <summary>
+        /// Whether this relationship view represents a response (used in dynamic views only). 
+        /// </summary>
+        /// <returns></returns>
+        [DataMember(Name = "response", EmitDefaultValue = false)]
+        public bool? Response;
+        
         internal RelationshipView()
         {
             Vertices = new List<Vertex>();

@@ -209,8 +209,11 @@ namespace Structurizr.Examples
             // dynamic diagrams and deployment diagrams are not available with the Free Plan
             DynamicView dynamicView = views.CreateDynamicView(apiApplication, "SignIn", "Summarises how the sign in feature works in the single-page application.");
             dynamicView.Add(singlePageApplication, "Submits credentials to", signinController);
-            dynamicView.Add(signinController, "Calls isAuthenticated() on", securityComponent);
+            dynamicView.Add(signinController, "Validates credentials using", securityComponent);
             dynamicView.Add(securityComponent, "select * from users where username = ?", database);
+            dynamicView.Add(database, "Returns user data to", securityComponent);
+            dynamicView.Add(securityComponent, "Returns true if the hashed password matches", signinController);
+            dynamicView.Add(signinController, "Sends back an authentication token to", singlePageApplication);
             dynamicView.PaperSize = PaperSize.A5_Landscape;
 
             DeploymentView developmentDeploymentView = views.CreateDeploymentView(internetBankingSystem, "DevelopmentDeployment", "An example development deployment scenario for the Internet Banking System.");

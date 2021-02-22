@@ -201,12 +201,12 @@ namespace Structurizr
             }
         }
 
-        public RelationshipView Add(Element source, Element destination)
+        public RelationshipView Add(StaticStructureElement source, StaticStructureElement destination)
         {
             return Add(source, "", destination);
         }
 
-        public RelationshipView Add(Element source, string description, Element destination)
+        public RelationshipView Add(StaticStructureElement source, string description, StaticStructureElement destination)
         {
             if (source == null) {
                 throw new ArgumentException("A source element must be specified.");
@@ -221,16 +221,30 @@ namespace Structurizr
 
             // check that the relationship is in the model before adding it
             Relationship relationship = source.GetEfferentRelationshipWith(destination);
+            
             if (relationship != null)
             {
                 AddElement(source, false);
                 AddElement(destination, false);
-                RelationshipView relationshipView = AddRelationship(relationship, description, _sequenceNumber.GetNext());
-                return relationshipView;
+
+                return AddRelationship(relationship, description, _sequenceNumber.GetNext(), false);
             }
             else
             {
-                throw new ArgumentException("Relationship does not exist in model");
+                // perhaps model this as a return/reply/response message instead, if the reverse relationship exists
+                relationship = destination.GetEfferentRelationshipWith(source);
+
+                if (relationship != null)
+                {
+                    AddElement(source, false);
+                    AddElement(destination, false);
+
+                    return AddRelationship(relationship, description, _sequenceNumber.GetNext(), true);
+                }
+                else
+                { 
+                    throw new ArgumentException("A relationship between " + source.Name + " and " + destination.Name + " does not exist in model.");
+                }
             }
         }
 
