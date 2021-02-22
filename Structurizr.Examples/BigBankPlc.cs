@@ -222,7 +222,7 @@ namespace Structurizr.Examples
             developmentDeploymentView.AddAnimation(developmentSinglePageApplication);
             developmentDeploymentView.AddAnimation(developmentWebApplication, developmentApiApplication);
             developmentDeploymentView.AddAnimation(developmentDatabase);
-            //developmentDeploymentView.AddAnimation(developmentMainframeBankingSystem);
+            developmentDeploymentView.AddAnimation(developmentMainframeBankingSystem);
 
             DeploymentView liveDeploymentView = views.CreateDeploymentView(internetBankingSystem, "LiveDeployment", "An example live deployment scenario for the Internet Banking System.");
             liveDeploymentView.Environment = "Live";
@@ -237,7 +237,7 @@ namespace Structurizr.Examples
             liveDeploymentView.AddAnimation(liveWebApplication, liveApiApplication);
             liveDeploymentView.AddAnimation(livePrimaryDatabase);
             liveDeploymentView.AddAnimation(liveSecondaryDatabase);
-            //liveDeploymentView.AddAnimation(liveMainframeBankingSystem);
+            liveDeploymentView.AddAnimation(liveMainframeBankingSystem);
 
             // colours, shapes and other diagram styling
             Styles styles = views.Configuration.Styles;
