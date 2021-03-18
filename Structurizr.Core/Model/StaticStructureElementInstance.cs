@@ -15,6 +15,9 @@ namespace Structurizr
         private const int DefaultHealthCheckIntervalInSeconds = 60;
         private const long DefaultHealthCheckTimeoutInMilliseconds = 0;
 
+        [DataMember(Name = "deploymentGroup", EmitDefaultValue = false)]
+        public string DeploymentGroup { get; internal set; }
+        
         [DataMember(Name = "instanceId", EmitDefaultValue = false)]
         public int InstanceId { get; internal set; }
 

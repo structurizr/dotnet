@@ -165,23 +165,23 @@ namespace Structurizr
         /// <returns>a SoftwareSystemInstance object</returns>
         public SoftwareSystemInstance Add(SoftwareSystem softwareSystem)
         {
-            return Add(softwareSystem, true);
+            return Add(softwareSystem, DefaultDeploymentGroup);
         }
 
         /// <summary>
         /// Adds a software system instance to this deployment node, optionally replicating relationships.
         /// </summary>
         /// <param name="softwareSystem">the SoftwareSystem to add an instance of</param>
-        /// <param name="replicateRelationships">true if relationships should be replicated between the element instances in the same deployment environment, false otherwise</param>
+        /// <param name="deploymentGroup">the deployment group</param>
         /// <returns>a SoftwareSystemInstance object</returns>
-        public SoftwareSystemInstance Add(SoftwareSystem softwareSystem, bool replicateRelationships)
+        public SoftwareSystemInstance Add(SoftwareSystem softwareSystem, string deploymentGroup)
         {
             if (softwareSystem == null)
             {
                 throw new ArgumentException("A software system must be specified.");
             }
 
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(this, softwareSystem, replicateRelationships);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(this, softwareSystem, deploymentGroup);
             _softwareSystemInstances.Add(softwareSystemInstance);
     
             return softwareSystemInstance;
@@ -194,22 +194,23 @@ namespace Structurizr
         /// <returns>a ContainerInstance object</returns>
         public ContainerInstance Add(Container container)
         {
-            return Add(container, true);
+            return Add(container, DefaultDeploymentGroup);
         }
 
         /// <summary>
         /// Adds a container instance to this deployment node.
         /// </summary>
         /// <param name="container">the Container to add an instance of</param>
+        /// <param name="deploymentGroup">the deployment group</param>
         /// <returns>a ContainerInstance object</returns>
-        public ContainerInstance Add(Container container, bool replicateRelationships)
+        public ContainerInstance Add(Container container, string deploymentGroup)
         {
             if (container == null)
             {
                 throw new ArgumentException("A container must be specified.");
             }
 
-            ContainerInstance containerInstance = Model.AddContainerInstance(this, container, replicateRelationships);
+            ContainerInstance containerInstance = Model.AddContainerInstance(this, container, deploymentGroup);
             _containerInstances.Add(containerInstance);
     
             return containerInstance;

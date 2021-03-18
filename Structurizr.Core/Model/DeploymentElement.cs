@@ -11,6 +11,7 @@ namespace Structurizr
     {
         
         internal const string DefaultDeploymentEnvironment = "Default";
+        internal const string DefaultDeploymentGroup = "Default";
 
         [DataMember(Name = "environment", EmitDefaultValue = false)]
         public string Environment { get; internal set; }

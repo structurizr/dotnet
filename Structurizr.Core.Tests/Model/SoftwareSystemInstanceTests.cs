@@ -19,7 +19,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_construction()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Same(_softwareSystem, softwareSystemInstance.SoftwareSystem);
             Assert.Equal(_softwareSystem.Id, softwareSystemInstance.SoftwareSystemId);
@@ -29,7 +29,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_SoftwareSystemId()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Equal(_softwareSystem.Id, softwareSystemInstance.SoftwareSystemId);
             softwareSystemInstance.SoftwareSystem = null;
@@ -40,7 +40,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_Name()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Equal(_softwareSystem.Name, softwareSystemInstance.Name);
     
@@ -51,7 +51,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_CanonicalName()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Equal("SoftwareSystemInstance://Default/Deployment Node/System[1]", softwareSystemInstance.CanonicalName);
         }
@@ -59,7 +59,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_Parent_ReturnsTheParentDeploymentNode()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Equal(_deploymentNode, softwareSystemInstance.Parent);
         }
@@ -67,7 +67,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_RequiredTags()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.Equal(0, softwareSystemInstance.GetRequiredTags().Count);
         }
@@ -76,7 +76,7 @@ namespace Structurizr.Core.Tests
         public void test_Tags()
         {
             _softwareSystem.AddTags("Tag 1");
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
             softwareSystemInstance.AddTags("Primary Instance");
     
             Assert.Equal("Software System Instance,Primary Instance", softwareSystemInstance.Tags);
@@ -85,7 +85,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_RemoveTags_DoesNotRemoveRequiredTags()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
     
             Assert.True(softwareSystemInstance.Tags.Contains(Tags.SoftwareSystemInstance));
     
@@ -97,7 +97,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
             Assert.Equal(0, softwareSystemInstance.HealthChecks.Count);
 
             HttpHealthCheck healthCheck = softwareSystemInstance.AddHealthCheck("Test web application is working", "http://localhost:8080");
@@ -111,7 +111,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheNameIsNull()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -127,7 +127,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheNameIsEmpty()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -143,7 +143,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheUrlIsNull()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -159,7 +159,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheUrlIsEmpty()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -175,7 +175,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheUrlIsInvalid()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -191,7 +191,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheIntervalIsLessThanZero()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {
@@ -207,7 +207,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void test_AddHealthCheck_ThrowsAnException_WhenTheTimeoutIsLessThanZero()
         {
-            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, true);
+            SoftwareSystemInstance softwareSystemInstance = Model.AddSoftwareSystemInstance(_deploymentNode, _softwareSystem, "Default");
 
             try
             {

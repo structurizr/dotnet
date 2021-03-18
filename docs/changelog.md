@@ -9,6 +9,7 @@
 - Adds support for element groups.
 - Removes restrictions related to adding "external" containers/components to dynamic views.
 - Enhanced the logic to merge layout information of elements on views.
+- Adds support for "deployment groups", providing a way to scope how software system/container instance relationships are replicated when added to deployment nodes. __breaking change__
 
 ## 0.9.7 (29th June 2020)
 

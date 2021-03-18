@@ -213,7 +213,7 @@ namespace Structurizr
             }
         }
         
-        internal SoftwareSystemInstance AddSoftwareSystemInstance(DeploymentNode deploymentNode, SoftwareSystem softwareSystem, bool replicateRelationships)
+        internal SoftwareSystemInstance AddSoftwareSystemInstance(DeploymentNode deploymentNode, SoftwareSystem softwareSystem, string deploymentGroup)
         {
             if (softwareSystem == null) {
                 throw new ArgumentException("A software system must be specified.");
@@ -221,20 +221,18 @@ namespace Structurizr
 
             long instanceNumber = deploymentNode.SoftwareSystemInstances.Count(ssi => ssi.SoftwareSystem.Equals(softwareSystem));
             instanceNumber++;
-            SoftwareSystemInstance softwareSystemInstance = new SoftwareSystemInstance(softwareSystem, (int)instanceNumber, deploymentNode.Environment);
+            SoftwareSystemInstance softwareSystemInstance = new SoftwareSystemInstance(softwareSystem, (int)instanceNumber, deploymentNode.Environment, deploymentGroup);
             softwareSystemInstance.Parent = deploymentNode;
             softwareSystemInstance.Id = IdGenerator.GenerateId(softwareSystemInstance);
 
-            if (replicateRelationships) {
-                ReplicateElementRelationships(deploymentNode.Environment, softwareSystemInstance);
-            }
+            ReplicateElementRelationships(softwareSystemInstance);
 
             AddElementToInternalStructures(softwareSystemInstance);
 
             return softwareSystemInstance;
         }
 
-        internal ContainerInstance AddContainerInstance(DeploymentNode deploymentNode, Container container, bool replicateRelationships)
+        internal ContainerInstance AddContainerInstance(DeploymentNode deploymentNode, Container container, string deploymentGroup)
         {
             if (container == null) {
                 throw new ArgumentException("A container must be specified.");
@@ -242,25 +240,24 @@ namespace Structurizr
 
             long instanceNumber = deploymentNode.ContainerInstances.Count(ci => ci.Container.Equals(container));
             instanceNumber++;
-            ContainerInstance containerInstance = new ContainerInstance(container, (int)instanceNumber, deploymentNode.Environment);
+            ContainerInstance containerInstance = new ContainerInstance(container, (int)instanceNumber, deploymentNode.Environment, deploymentGroup);
             containerInstance.Parent = deploymentNode;
             containerInstance.Id = IdGenerator.GenerateId(containerInstance);
 
-            if (replicateRelationships) {
-                ReplicateElementRelationships(deploymentNode.Environment, containerInstance);
-            }
+            ReplicateElementRelationships(containerInstance);
 
             AddElementToInternalStructures(containerInstance);
 
             return containerInstance;
         }
 
-        private void ReplicateElementRelationships(string deploymentEnvironment, StaticStructureElementInstance elementInstance) {
+        private void ReplicateElementRelationships(StaticStructureElementInstance elementInstance) {
             StaticStructureElement element = elementInstance.getElement();
 
-            IEnumerable<StaticStructureElementInstance> elementInstances = GetElements().OfType<StaticStructureElementInstance>().Where(ssei => ssei.Environment.Equals(deploymentEnvironment));
+            // find all StaticStructureElementInstance objects in the same deployment environment and deployment group
+            IEnumerable<StaticStructureElementInstance> elementInstances = GetElements().OfType<StaticStructureElementInstance>().Where(ssei => ssei.Environment.Equals(elementInstance.Environment) && ssei.DeploymentGroup.Equals(elementInstance.DeploymentGroup));
 
-            // and replicate the relationships within the same deployment environment
+            // and replicate the relationships to/from the element instance
             foreach (StaticStructureElementInstance ssei in elementInstances) {
                 StaticStructureElement sse = ssei.getElement();
 

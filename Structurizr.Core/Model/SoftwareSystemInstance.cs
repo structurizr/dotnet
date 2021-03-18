@@ -36,12 +36,13 @@ namespace Structurizr
         internal SoftwareSystemInstance() {
         }
 
-        internal SoftwareSystemInstance(SoftwareSystem softwareSystem, int instanceId, string environment)
+        internal SoftwareSystemInstance(SoftwareSystem softwareSystem, int instanceId, string environment, string deploymentGroup)
         {
             SoftwareSystem = softwareSystem;
             AddTags(Structurizr.Tags.SoftwareSystemInstance);
             InstanceId = instanceId;
             Environment = environment;
+            DeploymentGroup = deploymentGroup;
         }
 
         public override StaticStructureElement getElement()

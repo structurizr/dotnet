@@ -10,7 +10,7 @@ namespace Structurizr.Core.Tests
         [Fact]
         public void Test_AddContainerInstance_ThrowsAnException_WhenANullContainerIsSpecified() {
             try {
-                Model.AddContainerInstance(null, null, true);
+                Model.AddContainerInstance(null, null, "Default");
                 throw new TestFailedException();
             } catch (ArgumentException ae) {
                 Assert.Equal("A container must be specified.", ae.Message);
@@ -33,9 +33,9 @@ namespace Structurizr.Core.Tests
             container1.Uses(container2, "Uses 1", "Technology 1", InteractionStyle.Synchronous);
             container2.Uses(container3, "Uses 2", "Technology 2", InteractionStyle.Asynchronous);
     
-            ContainerInstance containerInstance1 = Model.AddContainerInstance(developmentDeploymentNode, container1, true);
-            ContainerInstance containerInstance2 = Model.AddContainerInstance(developmentDeploymentNode, container2, true);
-            ContainerInstance containerInstance3 = Model.AddContainerInstance(developmentDeploymentNode, container3, true);
+            ContainerInstance containerInstance1 = developmentDeploymentNode.Add(container1);
+            ContainerInstance containerInstance2 = developmentDeploymentNode.Add(container2);
+            ContainerInstance containerInstance3 = developmentDeploymentNode.Add(container3);
     
             // the following live container instances should not affect the relationships of the development container instances
             DeploymentNode liveDeploymentNode = Model.AddDeploymentNode("Live", "Deployment Node", "Description", "Technology");
@@ -387,6 +387,72 @@ namespace Structurizr.Core.Tests
                 Assert.Equal("A deployment/infrastructure node named 'Node' already exists.", iae.Message);
             }
         }
+        
+        [Fact]
+        public void Test_AddElementInstance_AddsElementInstancesAndReplicatesRelationshipsWithinTheDeploymentEnvironmentAndDefaultGroup()
+        {
+            SoftwareSystem softwareSystem1 = Model.AddSoftwareSystem("Software System");
+            Container api = softwareSystem1.AddContainer("API");
+            Container database = softwareSystem1.AddContainer("Database");
+            api.Uses(database, "Uses");
+
+            DeploymentNode liveDeploymentNode = Model.AddDeploymentNode("Live", "Deployment Node", "Description", "Technology");
+            ContainerInstance apiInstance1 = liveDeploymentNode.Add(api);
+            ContainerInstance databaseInstance1 = liveDeploymentNode.Add(database);
+
+            ContainerInstance apiInstance2 = liveDeploymentNode.Add(api);
+            ContainerInstance databaseInstance2 = liveDeploymentNode.Add(database);
+
+            Assert.Equal(2, apiInstance1.Relationships.Count);
+            Assert.Equal(2, apiInstance2.Relationships.Count);
+
+            // apiInstance1 -> databaseInstance1
+            Relationship relationship = apiInstance1.GetEfferentRelationshipWith(databaseInstance1);
+            Assert.Equal("Uses", relationship.Description);
+
+            // apiInstance1 -> databaseInstance2
+            relationship = apiInstance1.GetEfferentRelationshipWith(databaseInstance2);
+            Assert.Equal("Uses", relationship.Description);
+
+            // apiInstance2 -> databaseInstance1
+            relationship = apiInstance2.GetEfferentRelationshipWith(databaseInstance1);
+            Assert.Equal("Uses", relationship.Description);
+
+            // apiInstance2 -> databaseInstance2
+            relationship = apiInstance2.GetEfferentRelationshipWith(databaseInstance2);
+            Assert.Equal("Uses", relationship.Description);
+        }
+
+        [Fact]
+        public void Test_AddElementInstance_AddsElementInstancesAndReplicatesRelationshipsWithinTheDeploymentEnvironmentAndSpecifiedGroup()
+        {
+            // in this test, container instances are added to two deployment groups: "Service 1" and "Service 2"
+            // relationships are not replicated between element instances in other groups
+            
+            SoftwareSystem softwareSystem1 = Model.AddSoftwareSystem("Software System");
+            Container api = softwareSystem1.AddContainer("API");
+            Container database = softwareSystem1.AddContainer("Database");
+            api.Uses(database, "Uses");
+
+            DeploymentNode liveDeploymentNode = Model.AddDeploymentNode("Live", "Deployment Node", "Description", "Technology");
+            ContainerInstance apiInstance1 = liveDeploymentNode.Add(api, "Service 1");
+            ContainerInstance databaseInstance1 = liveDeploymentNode.Add(database, "Service 1");
+
+            ContainerInstance apiInstance2 = liveDeploymentNode.Add(api, "Service 2");
+            ContainerInstance databaseInstance2 = liveDeploymentNode.Add(database, "Service 2");
+
+            Assert.Equal(1, apiInstance1.Relationships.Count);
+            Assert.Equal(1, apiInstance2.Relationships.Count);
+
+            // apiInstance1 -> databaseInstance1
+            Relationship relationship = apiInstance1.GetEfferentRelationshipWith(databaseInstance1);
+            Assert.Equal("Uses", relationship.Description);
+
+            // apiInstance2 -> databaseInstance2
+            relationship = apiInstance2.GetEfferentRelationshipWith(databaseInstance2);
+            Assert.Equal("Uses", relationship.Description);
+        }
+
 
     }
 }

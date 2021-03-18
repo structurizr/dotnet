@@ -36,12 +36,13 @@ namespace Structurizr
         internal ContainerInstance() {
         }
 
-        internal ContainerInstance(Container container, int instanceId, string environment)
+        internal ContainerInstance(Container container, int instanceId, string environment, string deploymentGroup)
         {
             Container = container;
             AddTags(Structurizr.Tags.ContainerInstance);
             InstanceId = instanceId;
             Environment = environment;
+            DeploymentGroup = deploymentGroup;
         }
 
         public override StaticStructureElement getElement()
