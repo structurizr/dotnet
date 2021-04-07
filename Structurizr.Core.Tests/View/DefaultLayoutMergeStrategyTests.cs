@@ -152,6 +152,27 @@ namespace Structurizr.Core.Tests
             Assert.Equal(0, view2.GetElementView(container2).X);
             Assert.Equal(0, view2.GetElementView(container2).Y);
         }
+        
+        [Fact]
+        public void Test_CopyLayoutInformation_DoesNotThrowAnExceptionWhenAddingAnElementToAView() {
+            Workspace workspace1 = new Workspace("1", "");
+            SoftwareSystem softwareSystem1A = workspace1.Model.AddSoftwareSystem("Software System A");
+            SoftwareSystem softwareSystem1B = workspace1.Model.AddSoftwareSystem("Software System B");
+            softwareSystem1A.Uses(softwareSystem1B, "Uses");
+            SystemLandscapeView view1 = workspace1.Views.CreateSystemLandscapeView("key", "description");
+            view1.Add(softwareSystem1A);
+
+            Workspace workspace2 = new Workspace("2", "");
+            SoftwareSystem softwareSystem2A = workspace2.Model.AddSoftwareSystem("Software System A");
+            SoftwareSystem softwareSystem2B = workspace2.Model.AddSoftwareSystem("Software System B");
+            softwareSystem2A.Uses(softwareSystem2B, "Uses");
+            SystemLandscapeView view2 = workspace2.Views.CreateSystemLandscapeView("key", "description");
+            view2.Add(softwareSystem2A);
+            view2.Add(softwareSystem2B);
+
+            DefaultLayoutMergeStrategy strategy = new DefaultLayoutMergeStrategy();
+            strategy.CopyLayoutInformation(view1, view2);
+        }
 
     }
     

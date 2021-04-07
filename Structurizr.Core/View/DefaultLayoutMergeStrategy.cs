@@ -118,6 +118,11 @@ namespace Structurizr
 
         private RelationshipView findRelationshipView(View viewWithLayoutInformation, Relationship relationshipWithoutLayoutInformation, Dictionary<Element,Element> elementMap)
         {
+            if (!elementMap.ContainsKey(relationshipWithoutLayoutInformation.Source) || !elementMap.ContainsKey(relationshipWithoutLayoutInformation.Destination))
+            {
+                return null;
+            }
+            
             Element sourceElementWithLayoutInformation = elementMap[relationshipWithoutLayoutInformation.Source];
             Element destinationElementWithLayoutInformation = elementMap[relationshipWithoutLayoutInformation.Destination];
 
@@ -138,6 +143,11 @@ namespace Structurizr
 
         private RelationshipView findRelationshipView(View view, RelationshipView relationshipWithoutLayoutInformation, Dictionary<Element,Element> elementMap)
         {
+            if (!elementMap.ContainsKey(relationshipWithoutLayoutInformation.Relationship.Source) || !elementMap.ContainsKey(relationshipWithoutLayoutInformation.Relationship.Destination))
+            {
+                return null;
+            }
+            
             Element sourceElementWithLayoutInformation = elementMap[relationshipWithoutLayoutInformation.Relationship.Source];
             Element destinationElementWithLayoutInformation = elementMap[relationshipWithoutLayoutInformation.Relationship.Destination];
 
