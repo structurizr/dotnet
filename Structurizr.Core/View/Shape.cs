@@ -8,6 +8,7 @@
         Circle,
         Ellipse,
         Hexagon,
+        Diamond,
         Cylinder,
         Pipe,
         Person,
