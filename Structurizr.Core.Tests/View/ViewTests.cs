@@ -76,6 +76,8 @@ namespace Structurizr.Core.Tests.View
 
             // create a view with SystemA and Person (locations are set for both, relationship has vertices)
             StaticView staticView1 = new SystemContextView(softwareSystem1A, "context", "Description");
+            staticView1.PaperSize = PaperSize.A3_Landscape;
+            staticView1.Dimensions = new Dimensions(123, 456);
             staticView1.Add(softwareSystem1B);
             staticView1.GetElementView(softwareSystem1B).X = 123;
             staticView1.GetElementView(softwareSystem1B).Y = 321;
@@ -122,6 +124,9 @@ namespace Structurizr.Core.Tests.View
             dynamicView2.Add(person2, "Overridden description", softwareSystem2A);
 
             staticView2.CopyLayoutInformationFrom(staticView1);
+            Assert.Equal(PaperSize.A3_Landscape, staticView2.PaperSize);
+            Assert.Equal(123, staticView2.Dimensions.Width);
+            Assert.Equal(456, staticView2.Dimensions.Height);
             Assert.Equal(0, staticView2.GetElementView(softwareSystem2A).X);
             Assert.Equal(0, staticView2.GetElementView(softwareSystem2A).Y);
             Assert.Equal(123, staticView2.GetElementView(softwareSystem2B).X);

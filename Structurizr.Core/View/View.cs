@@ -73,6 +73,12 @@ namespace Structurizr
         [DataMember(Name = "paperSize", EmitDefaultValue = false)]
         public PaperSize PaperSize { get; set; }
 
+        /// <summary>
+        /// The dimensions of the view (in pixels).
+        /// </summary>
+        [DataMember(Name = "dimensions", EmitDefaultValue = false)]
+        public Dimensions Dimensions { get; set; }
+        
         private HashSet<ElementView> _elements;
 
         /// <summary>

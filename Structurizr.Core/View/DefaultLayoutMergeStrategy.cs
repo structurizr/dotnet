@@ -29,6 +29,7 @@ namespace Structurizr
         public void CopyLayoutInformation(View viewWithLayoutInformation, View viewWithoutLayoutInformation)
         {
             setPaperSizeIfNotSpecified(viewWithLayoutInformation, viewWithoutLayoutInformation);
+            setDimensionsIfNotSpecified(viewWithLayoutInformation, viewWithoutLayoutInformation);
 
             Dictionary<ElementView, ElementView> elementViewMap = new Dictionary<ElementView, ElementView>();
             Dictionary<Element, Element> elementMap = new Dictionary<Element, Element>();
@@ -80,13 +81,20 @@ namespace Structurizr
             }
         }
 
-    /**
-     * Finds an element. Override this to change the behaviour.
-     *
-     * @param viewWithLayoutInformation             the view to search
-     * @param elementWithoutLayoutInformation       the Element to find
-     * @return  an ElementView
-     */
+        private void setDimensionsIfNotSpecified(View remoteView, View localView)
+        {
+            if (localView.Dimensions == null)
+            {
+                localView.Dimensions = remoteView.Dimensions;
+            }
+        }
+
+        /// <summary>
+        /// Finds an element. Override this to change the behaviour.
+        /// </summary>
+        /// <param name="viewWithLayoutInformation">the view to search</param>
+        /// <param name="elementWithoutLayoutInformation">the Element to find</param>
+        /// <returns></returns>
         protected ElementView findElementView(View viewWithLayoutInformation, Element elementWithoutLayoutInformation)
         {
             // see if we can find an element with the same canonical name in the source view

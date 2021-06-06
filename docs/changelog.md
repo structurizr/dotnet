@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.0.0 (unreleased)
+## 1.0.1 (unreleased)
+
+- Provides a way to store view dimensions.
+
+## 1.0.0 (14th May 2021)
 
 - Adds support for custom ID generators.
 - Improved the support for creating [implied relationships](docs/implied-relationships.md).
