@@ -70,7 +70,7 @@ namespace Structurizr.Examples
             styles.Add(new ElementStyle(DatabaseTag) { Shape = Shape.Cylinder, Background = "#ffffff" });
             styles.Add(new ElementStyle(Tags.InfrastructureNode) { Shape = Shape.RoundedBox, Background = "#ffffff" });
 
-            views.Configuration.Theme = "https://raw.githubusercontent.com/structurizr/themes/master/amazon-web-services/theme.json";
+            views.Configuration.Theme = "https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json";
 
             StructurizrClient structurizrClient = new StructurizrClient(ApiKey, ApiSecret);
             structurizrClient.PutWorkspace(WorkspaceId, workspace);
