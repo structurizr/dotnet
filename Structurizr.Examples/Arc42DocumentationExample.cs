@@ -47,8 +47,8 @@ namespace Structurizr.Examples
             template.AddDeploymentViewSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "07-deployment-view.md")));
             template.AddCrosscuttingConceptsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "08-crosscutting-concepts.md")));
             template.AddArchitecturalDecisionsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "09-architecture-decisions.md")));
-            template.AddRisksAndTechnicalDebtSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "10-quality-requirements.md")));
-            template.AddQualityRequirementsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "11-risks-and-technical-debt.md")));
+            template.AddQualityRequirementsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "10-quality-requirements.md")));
+            template.AddRisksAndTechnicalDebtSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "11-risks-and-technical-debt.md")));
             template.AddGlossarySection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "12-glossary.md")));
 
             // this is the AsciiDoc version
@@ -62,8 +62,8 @@ namespace Structurizr.Examples
 //            template.AddDeploymentViewSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "07-deployment-view.adoc")));
 //            template.AddCrosscuttingConceptsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "08-crosscutting-concepts.adoc")));
 //            template.AddArchitecturalDecisionsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "09-architecture-decisions.adoc")));
-//            template.AddRisksAndTechnicalDebtSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "10-quality-requirements.adoc")));
-//            template.AddQualityRequirementsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "11-risks-and-technical-debt.adoc")));
+//            template.AddQualityRequirementsSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "10-quality-requirements.adoc")));
+//            template.AddRisksAndTechnicalDebtSection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "11-risks-and-technical-debt.adoc")));
 //            template.AddGlossarySection(softwareSystem, new FileInfo(Path.Combine(documentationRoot.FullName, "12-glossary.adoc")));
 
             StructurizrClient structurizrClient = new StructurizrClient(ApiKey, ApiSecret);
