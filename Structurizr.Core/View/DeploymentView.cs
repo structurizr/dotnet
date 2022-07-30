@@ -301,6 +301,16 @@ namespace Structurizr
         }
 
         /// <summary>
+        /// Adds a specific relationship to this view.
+        /// </summary>
+        /// <param name="relationship">the Relationship to be added</param>
+        /// <returns>a RelationshipView object representing the relationship added</returns>
+        public RelationshipView Add(Relationship relationship)
+        {
+            return AddRelationship(relationship);
+        }
+        
+        /// <summary>
         /// Adds an animation step, with the specified container instances and infrastructure nodes.
         /// </summary>
         /// <param name="elementInstances">the software system/container instances that should be shown in the animation step</param>

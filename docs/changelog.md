@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.0.1 (unreleased)
+## 1.1.0 (unreleased)
 
 - Provides a way to store view dimensions.
+- Provides a way to add specific relationships to dynamic views (fixes #98). 
 
 ## 1.0.0 (14th May 2021)
 

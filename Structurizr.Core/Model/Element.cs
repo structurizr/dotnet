@@ -124,6 +124,29 @@ namespace Structurizr
         }
 
         /// <summary>
+        /// Gets the efferent (outgoing) relationships with the specified element.
+        /// </summary>
+        /// <param name="element">the element to look for</param>
+        /// <returns>a Set of Relationship objects; empty if no relationships exist</returns>
+        public ISet<Relationship> GetEfferentRelationshipsWith(Element element)
+        {
+            ISet<Relationship> set = new HashSet<Relationship>();
+
+            if (element != null)
+            {
+                foreach (Relationship relationship in Relationships)
+                {
+                    if (relationship.Destination.Equals(element))
+                    {
+                        set.Add(relationship);
+                    }
+                }
+            }
+
+            return set;
+        }
+        
+        /// <summary>
         /// Gets the efferent (outgoing) relationship with the specified element.
         /// </summary>
         /// <param name="element">the element to look for</param>

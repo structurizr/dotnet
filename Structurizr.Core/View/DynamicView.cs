@@ -208,6 +208,11 @@ namespace Structurizr
 
         public RelationshipView Add(StaticStructureElement source, string description, StaticStructureElement destination)
         {
+            return Add(source, description, "", destination);
+        }
+
+        public RelationshipView Add(StaticStructureElement source, string description, string technology, StaticStructureElement destination)
+        {
             if (source == null) {
                 throw new ArgumentException("A source element must be specified.");
             }
@@ -220,7 +225,29 @@ namespace Structurizr
             CheckElementCanBeAdded(destination);
 
             // check that the relationship is in the model before adding it
-            Relationship relationship = source.GetEfferentRelationshipWith(destination);
+            // check that the relationship is in the model before adding it
+            Relationship relationship = null;
+
+            if (String.IsNullOrEmpty(technology))
+            {
+                // no technology is specified, so just pick the first relationship we find
+                relationship = source.GetEfferentRelationshipWith(destination, description);
+                if (relationship == null)
+                {
+                    relationship = source.GetEfferentRelationshipWith(destination);
+                }
+            }
+            else
+            {
+                ISet<Relationship> relationships = source.GetEfferentRelationshipsWith(destination);
+                foreach (Relationship rel in relationships)
+                {
+                    if (technology.Equals(rel.Technology))
+                    {
+                        relationship = rel;
+                    }
+                }
+            }
             
             if (relationship != null)
             {
@@ -248,15 +275,52 @@ namespace Structurizr
             }
         }
 
-        public override RelationshipView Add(Relationship relationship)
+        /// <summary>
+        /// Adds a specific relationship to this dynamic view, with the original description.
+        /// </summary>
+        /// <param name="relationship">the Relationship to add</param>
+        /// <returns>a RelationshipView</returns>
+        public RelationshipView Add(Relationship relationship)
+         {
+            return Add(relationship, "");
+        }
+
+        /// <summary>
+        /// Adds a specific relationship to this dynamic view, with an overidden description.
+        /// </summary>
+        /// <param name="relationship">the Relationship to add</param>
+        /// <param name="description">the overidden description</param>
+        /// <returns>a RelationshipView</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public RelationshipView Add(Relationship relationship, string description)
         {
-            // when adding a relationship to a DynamicView we suppose the user really wants to also see both elements
+            if (relationship == null)
+            {
+                throw new ArgumentException("A relationship must be specified.");
+            }
+
+            CheckElementCanBeAdded(relationship.Source);
+            CheckElementCanBeAdded(relationship.Destination);
+
             AddElement(relationship.Source, false);
             AddElement(relationship.Destination, false);
 
-            return base.Add(relationship);
+            return AddRelationship(relationship, description, _sequenceNumber.GetNext(), false);
         }
+        
+        internal RelationshipView AddRelationship(Relationship relationship, string description, string order, bool response)
+        {
+            RelationshipView relationshipView = AddRelationship(relationship);
+            if (relationshipView != null)
+            {
+                relationshipView.Description = description;
+                relationshipView.Order = order;
+                relationshipView.Response = response;
+            }
 
+            return relationshipView;
+        }
+        
         public void StartParallelSequence()
         {
             _sequenceNumber.StartParallelSequence();

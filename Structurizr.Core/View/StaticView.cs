@@ -190,6 +190,15 @@ namespace Structurizr
             _animations.Add(new Animation(Animations.Count + 1, elementsInThisAnimationStep, relationshipsInThisAnimationStep));
         }
 
+        /// <summary>
+        /// Adds a specific relationship to this view.
+        /// </summary>
+        /// <param name="relationship">the Relationship to be added</param>
+        /// <returns>a RelationshipView object representing the relationship added</returns>
+        public RelationshipView Add(Relationship relationship)
+        {
+            return AddRelationship(relationship);
+        }
 
     }
 }

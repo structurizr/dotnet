@@ -146,11 +146,27 @@ namespace Structurizr.Core.Tests
         }
 
         [Fact]
-        public void Test_AddRelationshipDirectly()
+        public void Test_AddRelationshipWithOriginalDescription()
         {
             DynamicView dynamicView = Workspace.Views.CreateDynamicView(softwareSystemA, "key", "Description");
             dynamicView.Add(relationship);
             Assert.Equal(2, dynamicView.Elements.Count);
+
+            RelationshipView relationshipView = dynamicView.Relationships.First();
+            Assert.Same(relationship, relationshipView.Relationship);
+            Assert.Equal("", relationshipView.Description);
+        }
+
+        [Fact]
+        public void Test_AddRelationshipWithOveriddenDescription()
+        {
+            DynamicView dynamicView = Workspace.Views.CreateDynamicView(softwareSystemA, "key", "Description");
+            dynamicView.Add(relationship, "New description");
+            Assert.Equal(2, dynamicView.Elements.Count);
+
+            RelationshipView relationshipView = dynamicView.Relationships.First();
+            Assert.Same(relationship, relationshipView.Relationship);
+            Assert.Equal("New description", relationshipView.Description);
         }
 
         [Fact]
@@ -183,6 +199,46 @@ namespace Structurizr.Core.Tests
 
             Assert.Same(container2, view.Relationships.First(rv => rv.Order.Equals("1")).Relationship.Destination);
             Assert.Same(container3, view.Relationships.First(rv => rv.Order.Equals("2")).Relationship.Destination);
+        }
+
+        [Fact]
+        public void Test_NormalSequence_WhenThereAreMultipleDescriptions()
+        {
+            Workspace workspace = new Workspace("Name", "Description");
+
+            SoftwareSystem ss1 = workspace.Model.AddSoftwareSystem("Software System 1", "");
+            SoftwareSystem ss2 = workspace.Model.AddSoftwareSystem("Software System 2", "");
+
+            Relationship r1 = ss1.Uses(ss2, "Uses 1");
+            Relationship r2 = ss1.Uses(ss2, "Uses 2");
+
+            DynamicView view = workspace.Views.CreateDynamicView("key", "Description");
+
+            RelationshipView rv1 = view.Add(ss1, "Uses 1", ss2);
+            RelationshipView rv2 = view.Add(ss1, "Uses 2", ss2);
+
+            Assert.Same(r1, rv1.Relationship);
+            Assert.Same(r2, rv2.Relationship);
+        }
+
+        [Fact]
+        public void Test_NormalSequence_WhenThereAreMultipleTechnologies()
+        {
+            Workspace workspace = new Workspace("Name", "Description");
+
+            SoftwareSystem ss1 = workspace.Model.AddSoftwareSystem("Software System 1", "");
+            SoftwareSystem ss2 = workspace.Model.AddSoftwareSystem("Software System 2", "");
+
+            Relationship r1 = ss1.Uses(ss2, "Uses 1", "Tech 1");
+            Relationship r2 = ss1.Uses(ss2, "Uses 2", "Tech 2");
+
+            DynamicView view = workspace.Views.CreateDynamicView("key", "Description");
+
+            RelationshipView rv1 = view.Add(ss1, "Uses", "Tech 1", ss2);
+            RelationshipView rv2 = view.Add(ss1, "Uses", "Tech 2", ss2);
+
+            Assert.Same(r1, rv1.Relationship);
+            Assert.Same(r2, rv2.Relationship);
         }
 
         [Fact]

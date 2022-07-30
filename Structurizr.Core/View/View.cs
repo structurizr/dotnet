@@ -178,7 +178,7 @@ namespace Structurizr
             }
         }
 
-        public virtual RelationshipView Add(Relationship relationship)
+        protected RelationshipView AddRelationship(Relationship relationship)
         {
             if (relationship == null)
             {
@@ -194,19 +194,6 @@ namespace Structurizr
             }
 
             return null;
-        }
-
-        internal RelationshipView AddRelationship(Relationship relationship, string description, string order, bool response)
-        {
-            RelationshipView relationshipView = Add(relationship);
-            if (relationshipView != null)
-            {
-                relationshipView.Description = description;
-                relationshipView.Order = order;
-                relationshipView.Response = response;
-            }
-
-            return relationshipView;
         }
 
         internal bool IsElementInView(Element element)
