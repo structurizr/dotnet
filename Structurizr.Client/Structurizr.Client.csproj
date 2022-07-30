@@ -3,30 +3,24 @@
   <!-- Update this property group for every regular release -->
   <PropertyGroup>
     <ReleaseNotes></ReleaseNotes>
-    <Version>0.9.7</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup>
     <Description>The API client for publishing models on the Structurizr cloud service and on-premises installation.</Description>
     <Authors>Structurizr Limited</Authors>
-    <Copyright>Copyright 2017-2020</Copyright>
+    <Copyright>Copyright 2017-2022</Copyright>
     <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://structurizr.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/structurizr/dotnet</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-    <PackageReference Include="System.Net.Http">
-      <Version>4.3.2</Version>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
