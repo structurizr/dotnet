@@ -1,7 +1,8 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.1.0 (30th July 2022)
 
+- Removed support for .NET Framework.
 - Provides a way to store view dimensions.
 - Provides a way to add specific relationships to dynamic views (fixes #98). 
 
