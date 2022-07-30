@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
+using Structurizr.Api;
 using Structurizr.Core.Util;
 using Structurizr.Documentation;
 
