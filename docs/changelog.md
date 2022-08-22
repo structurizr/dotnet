@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (unreleased to Nuget)
+
+- Fixes #99 (Include mode on Filtered Views not working).
+
 ## 1.1.0 (30th July 2022)
 
 - Removed support for .NET Framework.

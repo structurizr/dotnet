@@ -19,7 +19,7 @@ namespace Structurizr
         [DataMember(Name="description", EmitDefaultValue=false)]
         public string Description { get; internal set; }
 
-        [DataMember(Name="mode", EmitDefaultValue=false)]
+        [DataMember(Name="mode", EmitDefaultValue=true)]
         public FilterMode Mode { get; internal set; }
 
         [DataMember(Name="tags", EmitDefaultValue=false)]
