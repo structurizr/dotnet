@@ -243,7 +243,10 @@ namespace Structurizr.Api
         /// </summary>
         /// <param name="workspaceId">The workspace ID.</param>
         /// <param name="workspace">The workspace to be updated.</param>
-        public void PutWorkspace(long workspaceId, Workspace workspace)
+        /// <returns>A tuple containing the HTTP Response and the parsed workspace JSON.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="StructurizrClientException"></exception>
+        public (string response, string workspaceAsJson) PutWorkspace(long workspaceId, Workspace workspace)
         {
             if (workspace == null)
             {
@@ -292,7 +295,6 @@ namespace Structurizr.Api
                         }
                         stringWriter.Flush();
                         workspaceAsJson = stringWriter.ToString();
-                        System.Console.WriteLine(workspaceAsJson);
                     }
 
                     AddHeaders(httpClient, httpMethod, new Uri(Url + path).AbsolutePath, workspaceAsJson, "application/json; charset=UTF-8");
@@ -305,13 +307,14 @@ namespace Structurizr.Api
 
                     var response = httpClient.PutAsync(this.Url + path, content);
                     string responseContent = response.Result.Content.ReadAsStringAsync().Result;
-                    System.Console.WriteLine(responseContent);
 
                     if (response.Result.StatusCode != HttpStatusCode.OK)
                     {
                         ApiResponse apiResponse = ApiResponse.Parse(responseContent);
                         throw new StructurizrClientException(apiResponse.Message);
                     }
+
+                    return (responseContent, workspaceAsJson);
                 }
                 catch (Exception e)
                 {
