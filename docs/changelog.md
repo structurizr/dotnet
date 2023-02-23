@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.1.1 (unreleased to Nuget)
+## 1.1.1 (23rd February 2023)
 
 - Fixes #99 (Include mode on Filtered Views not working).
+- Fixes #103 (Default RankDirection not being serialized).
 
 ## 1.1.0 (30th July 2022)
 

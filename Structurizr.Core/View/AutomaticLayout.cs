@@ -10,7 +10,7 @@ namespace Structurizr
         /// <summary>
         /// The rank direction.
         /// </summary>
-        [DataMember(Name = "rankDirection", EmitDefaultValue = false)]
+        [DataMember(Name = "rankDirection", EmitDefaultValue = true)]
         public RankDirection RankDirection;
 
         private int _rankSeparation;
