@@ -4,11 +4,12 @@
     <ReleaseNotes>
     </ReleaseNotes>
     <Version>1.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
     <Description>The core library that can used to create software architecture models.</Description>
     <Authors>Structurizr Limited</Authors>
-    <Copyright>Copyright 2017-2022</Copyright>
+    <Copyright>Copyright 2017-2023</Copyright>
     <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://structurizr.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/structurizr/dotnet</RepositoryUrl>
