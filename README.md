@@ -1,8 +1,8 @@
 # Structurizr for .NET
 
-This GitHub repository is a client library for the [Structurizr cloud service and on-premises installation](https://structurizr.com) . This .NET library isn't as well supported as the original Java version, and some newer features are missing.
+This repo is a port of the [Structurizr for Java library](https://github.com/structurizr/java) but has drifted out of sync, and some newer features are missing. I will continue to support the Java-based Structurizr tooling but, due to time constraints, I will no longer be making updates to this codebase or releases via NuGet. The code remains open source, so you are welcome to fork the repo and make your own releases.
 
-Unless you are planning to use .NET code to generate parts of your software architecture model, the [Structurizr DSL](https://github.com/structurizr/dsl) is the recommended tooling for authoring Structurizr workspaces, while the [Structurizr CLI](https://github.com/structurizr/cli) can be used to push/pull workspaces and export views to PlantUML, Mermaid, etc.
+Unless you are planning to use .NET code to generate parts of your software architecture model, the [Structurizr DSL](https://docs.structurizr.com/dsl) is the recommended tooling for authoring Structurizr workspaces.
 
 ## A quick example
 
